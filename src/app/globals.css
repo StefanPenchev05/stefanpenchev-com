@@ -97,6 +97,12 @@ a {
   background: linear-gradient(145deg, rgba(9, 11, 14, 0.7), rgba(18, 22, 27, 0.86));
 }
 
+.chapter-panel--contact {
+  max-width: 34rem;
+  border-color: rgba(214, 167, 92, 0.22);
+  background: linear-gradient(145deg, rgba(9, 11, 14, 0.72), rgba(19, 21, 21, 0.9));
+}
+
 .chapter-panel__eyebrow {
   margin: 0 0 0.75rem;
   color: var(--cyan);
@@ -298,6 +304,44 @@ a {
   outline: none;
 }
 
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.35rem;
+}
+
+.contact-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  border: 1px solid rgba(138, 152, 168, 0.22);
+  border-radius: 6px;
+  background: rgba(9, 11, 14, 0.5);
+  padding: 0 0.95rem;
+  color: var(--text);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.contact-action--primary {
+  border-color: rgba(92, 200, 215, 0.46);
+  background: rgba(19, 41, 47, 0.78);
+}
+
+.contact-action:hover,
+.contact-action:focus-visible {
+  border-color: rgba(92, 200, 215, 0.72);
+  background: rgba(20, 31, 37, 0.94);
+  outline: none;
+}
+
+.closing-line {
+  color: #cfd8de !important;
+}
+
 .signals {
   display: flex;
   flex-wrap: wrap;
@@ -425,6 +469,11 @@ a {
   }
 
   .inspection-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-actions {
+    display: grid;
     grid-template-columns: 1fr;
   }
 

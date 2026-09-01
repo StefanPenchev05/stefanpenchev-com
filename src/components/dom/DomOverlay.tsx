@@ -24,6 +24,32 @@ export function DomOverlay() {
   const selectedArchitecture = buildSystemArchitecture(backendProject);
   const securityInspection = buildSecurityInspection(backendProject);
   const technologyMap = buildTechnologyMap();
+  const contactLinks = [
+    {
+      href: `mailto:${profile.email}`,
+      label: "Email me",
+      primary: true
+    },
+    {
+      href: profile.linkedinUrl,
+      label: "LinkedIn",
+      primary: false
+    },
+    {
+      href: profile.portfolioUrl,
+      label: "Portfolio",
+      primary: false
+    },
+    ...(profile.githubUrl
+      ? [
+          {
+            href: profile.githubUrl,
+            label: "GitHub",
+            primary: false
+          }
+        ]
+      : [])
+  ];
   const scrollToChapter = (index: number) => {
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     const target = maxScroll * (index / (chapters.length - 1));
@@ -60,6 +86,8 @@ export function DomOverlay() {
             activeChapter === 3 ? "chapter-panel--security" : ""
           } ${
             activeChapter === 4 ? "chapter-panel--technology" : ""
+          } ${
+            activeChapter === 5 ? "chapter-panel--contact" : ""
           }`}
         >
           <p className="chapter-panel__eyebrow">{chapter.eyebrow}</p>
@@ -206,6 +234,31 @@ export function DomOverlay() {
                   </span>
                 ))}
               </div>
+            </>
+          ) : activeChapter === 5 ? (
+            <>
+              <h2>{profile.name}</h2>
+              <p className="technical-meta">
+                {profile.title} / {profile.location}
+              </p>
+              <p>{profile.positioning}</p>
+              <div className="contact-actions" aria-label="Contact actions">
+                {contactLinks.map((link) => (
+                  <a
+                    className={link.primary ? "contact-action contact-action--primary" : "contact-action"}
+                    href={link.href}
+                    key={link.label}
+                    rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+                    target={link.href.startsWith("http") ? "_blank" : undefined}
+                  >
+                    {link.label}
+                  </a>
+                ))}
+                <button className="contact-action" onClick={() => scrollToChapter(0)} type="button">
+                  Restart journey
+                </button>
+              </div>
+              <p className="closing-line">Open to building thoughtful software systems.</p>
             </>
           ) : (
             <>
