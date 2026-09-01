@@ -17,7 +17,7 @@ export function ExperienceCanvas() {
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 0.95
         }}
-        shadows={false}
+        shadows
       >
         <SceneRoot />
       </Canvas>

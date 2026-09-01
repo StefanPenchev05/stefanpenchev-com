@@ -69,6 +69,12 @@ a {
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
 }
 
+.chapter-panel--identity {
+  max-width: 38rem;
+  border-color: rgba(92, 200, 215, 0.24);
+  background: linear-gradient(145deg, rgba(9, 11, 14, 0.7), rgba(18, 22, 27, 0.84));
+}
+
 .chapter-panel__eyebrow {
   margin: 0 0 0.75rem;
   color: var(--cyan);
@@ -87,11 +93,51 @@ a {
   letter-spacing: 0;
 }
 
+.chapter-panel--identity h1 {
+  max-width: 13ch;
+  font-size: clamp(2.4rem, 4.9vw, 5.6rem);
+  text-transform: uppercase;
+}
+
+.role-stack {
+  display: grid;
+  gap: 0.3rem;
+  margin-top: 1rem;
+  color: var(--text);
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: clamp(0.84rem, 1.1vw, 1rem);
+}
+
 .chapter-panel p {
   margin: 1rem 0 0;
   color: var(--muted);
   font-size: 1rem;
   line-height: 1.65;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.35rem;
+}
+
+.hero-actions button {
+  min-height: 2.55rem;
+  border: 1px solid rgba(92, 200, 215, 0.32);
+  border-radius: 6px;
+  background: rgba(12, 18, 22, 0.82);
+  padding: 0 1rem;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.hero-actions button:hover,
+.hero-actions button:focus-visible {
+  border-color: rgba(92, 200, 215, 0.72);
+  background: rgba(20, 31, 37, 0.92);
+  outline: none;
 }
 
 .signals {

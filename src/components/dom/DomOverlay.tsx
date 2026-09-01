@@ -6,6 +6,11 @@ import { useExperienceStore } from "@/lib/scroll/useExperienceStore";
 export function DomOverlay() {
   const activeChapter = useExperienceStore((state) => state.activeChapter);
   const chapter = chapters[activeChapter] ?? chapters[0];
+  const scrollToChapter = (index: number) => {
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const target = maxScroll * (index / (chapters.length - 1));
+    window.scrollTo({ top: target, behavior: "smooth" });
+  };
 
   return (
     <>
@@ -17,12 +22,7 @@ export function DomOverlay() {
           <button
             className={`chapter-nav__item ${index === activeChapter ? "is-active" : ""}`}
             key={item.id}
-            onClick={() => {
-              const maxScroll =
-                document.documentElement.scrollHeight - window.innerHeight;
-              const target = maxScroll * (index / (chapters.length - 1));
-              window.scrollTo({ top: target, behavior: "smooth" });
-            }}
+            onClick={() => scrollToChapter(index)}
             type="button"
           >
             <span className="chapter-nav__index">
@@ -33,17 +33,41 @@ export function DomOverlay() {
         ))}
       </nav>
       <section className="dom-overlay" aria-live="polite">
-        <article className="chapter-panel">
+        <article className={`chapter-panel ${activeChapter === 0 ? "chapter-panel--identity" : ""}`}>
           <p className="chapter-panel__eyebrow">{chapter.eyebrow}</p>
-          {activeChapter === 0 ? <h1>{chapter.title}</h1> : <h2>{chapter.title}</h2>}
-          <p>{chapter.description}</p>
-          <div className="signals" aria-label="Scene signals">
-            {chapter.signals.map((signal) => (
-              <span className="signal" key={signal}>
-                {signal}
-              </span>
-            ))}
-          </div>
+          {activeChapter === 0 ? (
+            <>
+              <h1>Stefan Penchev</h1>
+              <div className="role-stack" aria-label="Professional roles">
+                <span>Full-Stack Developer</span>
+                <span>Cybersecurity Engineer</span>
+              </div>
+              <p>
+                I build secure, scalable web systems across backend architecture,
+                frontend interfaces, databases, networks, and operational tooling.
+              </p>
+              <div className="hero-actions">
+                <button type="button" onClick={() => scrollToChapter(1)}>
+                  Explore Projects
+                </button>
+                <button type="button" onClick={() => scrollToChapter(5)}>
+                  Contact
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2>{chapter.title}</h2>
+              <p>{chapter.description}</p>
+              <div className="signals" aria-label="Scene signals">
+                {chapter.signals.map((signal) => (
+                  <span className="signal" key={signal}>
+                    {signal}
+                  </span>
+                ))}
+              </div>
+            </>
+          )}
         </article>
       </section>
     </>

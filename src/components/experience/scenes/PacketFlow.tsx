@@ -31,12 +31,13 @@ export function PacketFlow() {
       ? progress
       : Math.min(1, Math.max(0, progress + Math.sin(clock.elapsedTime * 1.4) * 0.005));
     meshRef.current.position.copy(interpolatePath(packetPath, flowProgress));
+    meshRef.current.visible = progress > 0.035;
   });
 
   return (
-    <mesh ref={meshRef}>
-      <sphereGeometry args={[0.09, 16, 8]} />
-      <meshBasicMaterial color="#e6edf3" />
+    <mesh ref={meshRef} visible={false}>
+      <sphereGeometry args={[0.07, 16, 8]} />
+      <meshBasicMaterial color="#5CC8D7" />
     </mesh>
   );
 }

@@ -7,12 +7,14 @@ import { BackendInfrastructure } from "@/components/experience/scenes/BackendInf
 import { CybersecurityNetwork } from "@/components/experience/scenes/CybersecurityNetwork";
 import { TechnologyConstellation } from "@/components/experience/scenes/TechnologyConstellation";
 import { ContactTerminal } from "@/components/experience/scenes/ContactTerminal";
+import { PerformanceProbe } from "@/components/experience/PerformanceProbe";
 
 export function SceneRoot() {
   return (
     <>
       <color args={["#090b0e"]} attach="background" />
       <CameraRig />
+      <PerformanceProbe />
       <LightingRig />
       <group>
         <OperationsWorkstation />

@@ -33,6 +33,8 @@ next-env.d.ts
 
 # Local test artifacts
 prototype-desktop.png
+workstation-visual-desktop.png
+workstation-visual-mobile.png
 
 # Package manager caches
 .npm/
