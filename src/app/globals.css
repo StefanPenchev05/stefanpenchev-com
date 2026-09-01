@@ -91,6 +91,12 @@ a {
   background: linear-gradient(145deg, rgba(9, 11, 14, 0.74), rgba(16, 22, 25, 0.9));
 }
 
+.chapter-panel--technology {
+  max-width: 32rem;
+  border-color: rgba(92, 200, 215, 0.22);
+  background: linear-gradient(145deg, rgba(9, 11, 14, 0.7), rgba(18, 22, 27, 0.86));
+}
+
 .chapter-panel__eyebrow {
   margin: 0 0 0.75rem;
   color: var(--cyan);
@@ -230,6 +236,10 @@ a {
 
 .request-state--security span {
   color: var(--green);
+}
+
+.request-state--technology span {
+  color: var(--cyan);
 }
 
 .inspection-grid {

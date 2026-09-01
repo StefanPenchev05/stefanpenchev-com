@@ -24,6 +24,15 @@ export type SecurityInspectionStage = {
   description: string;
 };
 
+export type TechnologySelectionStage = {
+  groupId: string;
+  groupTitle: string;
+  technologyId: string;
+  technologyName: string;
+  relatedProjectTitles: string[];
+  domains: string[];
+};
+
 type ExperienceState = {
   activeChapter: number;
   progress: number;
@@ -32,6 +41,7 @@ type ExperienceState = {
   selectedProjectId: string;
   requestStage: RequestStage | null;
   securityInspectionStage: SecurityInspectionStage | null;
+  technologySelectionStage: TechnologySelectionStage | null;
   setActiveChapter: (activeChapter: number) => void;
   setProgress: (progress: number) => void;
   setReducedMotion: (reducedMotion: boolean) => void;
@@ -39,6 +49,7 @@ type ExperienceState = {
   setSelectedProjectId: (selectedProjectId: string) => void;
   setRequestStage: (requestStage: RequestStage | null) => void;
   setSecurityInspectionStage: (securityInspectionStage: SecurityInspectionStage | null) => void;
+  setTechnologySelectionStage: (technologySelectionStage: TechnologySelectionStage | null) => void;
 };
 
 export const useExperienceStore = create<ExperienceState>((set) => ({
@@ -49,13 +60,15 @@ export const useExperienceStore = create<ExperienceState>((set) => ({
   selectedProjectId: featuredProjects[0]?.id ?? "",
   requestStage: null,
   securityInspectionStage: null,
+  technologySelectionStage: null,
   setActiveChapter: (activeChapter) => set({ activeChapter }),
   setProgress: (progress) => set({ progress }),
   setReducedMotion: (reducedMotion) => set({ reducedMotion }),
   setPerformanceTier: (performanceTier) => set({ performanceTier }),
   setSelectedProjectId: (selectedProjectId) => set({ selectedProjectId }),
   setRequestStage: (requestStage) => set({ requestStage }),
-  setSecurityInspectionStage: (securityInspectionStage) => set({ securityInspectionStage })
+  setSecurityInspectionStage: (securityInspectionStage) => set({ securityInspectionStage }),
+  setTechnologySelectionStage: (technologySelectionStage) => set({ technologySelectionStage })
 }));
 
 export function chapterFromProgress(progress: number) {

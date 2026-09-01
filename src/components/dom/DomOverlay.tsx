@@ -3,6 +3,7 @@
 import { chapters } from "@/lib/data/chapters";
 import { cybersecurityEvidence, orderedProjects, profile } from "@/lib/data/portfolio";
 import { buildSecurityInspection } from "@/lib/data/securityInspection";
+import { buildTechnologyMap } from "@/lib/data/technologyMap";
 import {
   buildSystemArchitecture,
   getBackendVisualizationProject
@@ -14,6 +15,7 @@ export function DomOverlay() {
   const selectedProjectId = useExperienceStore((state) => state.selectedProjectId);
   const requestStage = useExperienceStore((state) => state.requestStage);
   const securityInspectionStage = useExperienceStore((state) => state.securityInspectionStage);
+  const technologySelectionStage = useExperienceStore((state) => state.technologySelectionStage);
   const setSelectedProjectId = useExperienceStore((state) => state.setSelectedProjectId);
   const chapter = chapters[activeChapter] ?? chapters[0];
   const selectedProject =
@@ -21,6 +23,7 @@ export function DomOverlay() {
   const backendProject = getBackendVisualizationProject(selectedProjectId);
   const selectedArchitecture = buildSystemArchitecture(backendProject);
   const securityInspection = buildSecurityInspection(backendProject);
+  const technologyMap = buildTechnologyMap();
   const scrollToChapter = (index: number) => {
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     const target = maxScroll * (index / (chapters.length - 1));
@@ -55,6 +58,8 @@ export function DomOverlay() {
             activeChapter === 2 ? "chapter-panel--backend" : ""
           } ${
             activeChapter === 3 ? "chapter-panel--security" : ""
+          } ${
+            activeChapter === 4 ? "chapter-panel--technology" : ""
           }`}
         >
           <p className="chapter-panel__eyebrow">{chapter.eyebrow}</p>
@@ -170,6 +175,34 @@ export function DomOverlay() {
                 {cybersecurityEvidence.supportedThemes.slice(0, 4).map((signal) => (
                   <span className="signal" key={signal}>
                     {signal}
+                  </span>
+                ))}
+              </div>
+            </>
+          ) : activeChapter === 4 ? (
+            <>
+              <h2>{technologySelectionStage?.groupTitle ?? chapter.title}</h2>
+              <p className="technical-meta">
+                Technology map / {technologyMap.clusters.length} groups / {technologyMap.totalTechnologies} technologies
+              </p>
+              <p>
+                {technologySelectionStage
+                  ? `${technologySelectionStage.technologyName} sits in ${technologySelectionStage.groupTitle}, connected through ${technologySelectionStage.domains.join(", ")}.`
+                  : chapter.description}
+              </p>
+              <div className="request-state request-state--technology" aria-label="Current technology selection">
+                <span>{technologySelectionStage?.technologyName ?? "capability map"}</span>
+                <strong>{technologySelectionStage?.groupTitle ?? "Technology constellation ready"}</strong>
+                <p>
+                  {technologySelectionStage?.relatedProjectTitles.length
+                    ? `Used in: ${technologySelectionStage.relatedProjectTitles.slice(0, 3).join(", ")}.`
+                    : "Project relationships are derived from the normalized project stacks."}
+                </p>
+              </div>
+              <div className="signals" aria-label="Technology groups">
+                {technologyMap.clusters.map((cluster) => (
+                  <span className="signal" key={cluster.id}>
+                    {cluster.title}
                   </span>
                 ))}
               </div>

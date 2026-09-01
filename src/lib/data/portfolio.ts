@@ -210,7 +210,7 @@ export type Technology = {
 };
 
 export type SkillGroup = {
-  id: string;
+  id: TechnologyGroupId;
   title: string;
   skills: string[];
   domains: EngineeringDomain[];
