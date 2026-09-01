@@ -104,12 +104,51 @@ export type RequestPathStep = {
   description?: string;
 };
 
+export type TrustZoneType =
+  | "external"
+  | "public"
+  | "application"
+  | "internal"
+  | "data"
+  | "privileged";
+
+export type SecurityState =
+  | "observed"
+  | "authenticated"
+  | "validated"
+  | "internal"
+  | "data-protected";
+
+export type SecurityInspectionStep = {
+  nodeId: string;
+  label: string;
+  concept: string;
+  trustZone: TrustZoneType;
+  securityState: SecurityState;
+  protocol?: string;
+  source?: string;
+  destination?: string;
+  description: string;
+};
+
+export type SecurityInspectionConfig = {
+  note: string;
+  trustZones: Array<{
+    id: string;
+    label: string;
+    type: TrustZoneType;
+    boundaryType: "entry" | "trust" | "data" | "internal" | "external";
+  }>;
+  inspectionPath: SecurityInspectionStep[];
+};
+
 export type ProjectArchitecture = {
   note: string;
   groups?: ArchitectureGroup[];
   nodes: ArchitectureNode[];
   edges: ArchitectureEdge[];
   requestPath?: RequestPathStep[];
+  security?: SecurityInspectionConfig;
 };
 
 export type PortfolioProject = {
@@ -362,7 +401,94 @@ export const projects: PortfolioProject[] = [
           label: "Client update",
           description: "The interface receives the final application response."
         }
-      ]
+      ],
+      security: {
+        note:
+          "Security view is limited to supported concepts: authenticated application access, service boundaries, and documented data components.",
+        trustZones: [
+          {
+            id: "client-facing",
+            label: "Public application edge",
+            type: "public",
+            boundaryType: "entry"
+          },
+          {
+            id: "application",
+            label: "Application trust boundary",
+            type: "application",
+            boundaryType: "trust"
+          },
+          {
+            id: "data-services",
+            label: "Data component boundary",
+            type: "data",
+            boundaryType: "data"
+          },
+          {
+            id: "ai-services",
+            label: "AI component boundary",
+            type: "internal",
+            boundaryType: "internal"
+          }
+        ],
+        inspectionPath: [
+          {
+            nodeId: "react-client",
+            label: "Public entry",
+            concept: "Client-facing request surface",
+            trustZone: "public",
+            securityState: "observed",
+            protocol: "application request",
+            source: "user interface",
+            destination: "application API",
+            description: "The request begins at the public-facing application interface."
+          },
+          {
+            nodeId: "node-api",
+            label: "Application validation",
+            concept: "Authentication-aware request handling",
+            trustZone: "application",
+            securityState: "validated",
+            protocol: "application API",
+            source: "client-facing layer",
+            destination: "application layer",
+            description: "The API layer is treated as the main validation and routing boundary."
+          },
+          {
+            nodeId: "redis",
+            label: "Cache/data access",
+            concept: "Bounded data component access",
+            trustZone: "data",
+            securityState: "data-protected",
+            protocol: "service data access",
+            source: "application API",
+            destination: "cache component",
+            description: "The documented Redis component is shown inside the data boundary."
+          },
+          {
+            nodeId: "mongodb",
+            label: "Persistent data boundary",
+            concept: "Database access boundary",
+            trustZone: "data",
+            securityState: "data-protected",
+            protocol: "database operation",
+            source: "application API",
+            destination: "database component",
+            description: "The documented MongoDB component is represented as protected persistent data."
+          },
+          {
+            nodeId: "python-ai",
+            label: "Internal component review",
+            concept: "Service dependency boundary",
+            trustZone: "internal",
+            securityState: "internal",
+            protocol: "internal component call",
+            source: "application API",
+            destination: "AI component",
+            description: "The Python AI component is inspected as an internal dependency boundary."
+          }
+        ]
+      }
     }
   },
   {

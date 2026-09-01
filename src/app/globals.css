@@ -85,6 +85,12 @@ a {
   background: linear-gradient(145deg, rgba(9, 11, 14, 0.72), rgba(18, 22, 27, 0.88));
 }
 
+.chapter-panel--security {
+  max-width: 32rem;
+  border-color: rgba(119, 201, 141, 0.24);
+  background: linear-gradient(145deg, rgba(9, 11, 14, 0.74), rgba(16, 22, 25, 0.9));
+}
+
 .chapter-panel__eyebrow {
   margin: 0 0 0.75rem;
   color: var(--cyan);
@@ -220,6 +226,41 @@ a {
   margin-top: 0.45rem;
   font-size: 0.86rem;
   line-height: 1.5;
+}
+
+.request-state--security span {
+  color: var(--green);
+}
+
+.inspection-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+}
+
+.inspection-grid div {
+  min-width: 0;
+  border: 1px solid rgba(138, 152, 168, 0.15);
+  border-radius: 6px;
+  background: rgba(9, 11, 14, 0.32);
+  padding: 0.55rem;
+}
+
+.inspection-grid dt {
+  color: var(--green);
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+
+.inspection-grid dd {
+  overflow: hidden;
+  margin: 0.2rem 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .hero-actions {
@@ -371,6 +412,10 @@ a {
     grid-template-columns: 1fr;
     max-height: 8rem;
     overflow-y: auto;
+  }
+
+  .inspection-grid {
+    grid-template-columns: 1fr;
   }
 
   .chapter-nav {

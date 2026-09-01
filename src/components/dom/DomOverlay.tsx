@@ -1,7 +1,8 @@
 "use client";
 
 import { chapters } from "@/lib/data/chapters";
-import { orderedProjects, profile } from "@/lib/data/portfolio";
+import { cybersecurityEvidence, orderedProjects, profile } from "@/lib/data/portfolio";
+import { buildSecurityInspection } from "@/lib/data/securityInspection";
 import {
   buildSystemArchitecture,
   getBackendVisualizationProject
@@ -12,12 +13,14 @@ export function DomOverlay() {
   const activeChapter = useExperienceStore((state) => state.activeChapter);
   const selectedProjectId = useExperienceStore((state) => state.selectedProjectId);
   const requestStage = useExperienceStore((state) => state.requestStage);
+  const securityInspectionStage = useExperienceStore((state) => state.securityInspectionStage);
   const setSelectedProjectId = useExperienceStore((state) => state.setSelectedProjectId);
   const chapter = chapters[activeChapter] ?? chapters[0];
   const selectedProject =
     orderedProjects.find((project) => project.id === selectedProjectId) ?? orderedProjects[0];
   const backendProject = getBackendVisualizationProject(selectedProjectId);
   const selectedArchitecture = buildSystemArchitecture(backendProject);
+  const securityInspection = buildSecurityInspection(backendProject);
   const scrollToChapter = (index: number) => {
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     const target = maxScroll * (index / (chapters.length - 1));
@@ -50,6 +53,8 @@ export function DomOverlay() {
             activeChapter === 1 ? "chapter-panel--project" : ""
           } ${
             activeChapter === 2 ? "chapter-panel--backend" : ""
+          } ${
+            activeChapter === 3 ? "chapter-panel--security" : ""
           }`}
         >
           <p className="chapter-panel__eyebrow">{chapter.eyebrow}</p>
@@ -123,6 +128,48 @@ export function DomOverlay() {
                 {selectedArchitecture.nodes.slice(0, 5).map((node) => (
                   <span className="signal" key={node.id}>
                     {node.technology ?? node.label}
+                  </span>
+                ))}
+              </div>
+            </>
+          ) : activeChapter === 3 ? (
+            <>
+              <h2>{chapter.title}</h2>
+              <p className="technical-meta">
+                Security inspection / {securityInspection.config.trustZones.length} trust zones / {backendProject.title}
+              </p>
+              <p>{securityInspection.config.note}</p>
+              <div className="request-state request-state--security" aria-label="Current security inspection">
+                <span>{securityInspectionStage?.trustZone ?? "trust boundary"}</span>
+                <strong>{securityInspectionStage?.label ?? "Inspection layer ready"}</strong>
+                <p>
+                  {securityInspectionStage
+                    ? `${securityInspectionStage.concept}: ${securityInspectionStage.description}`
+                    : "Scroll through the security chapter to inspect the same architecture through trust boundaries and protocol context."}
+                </p>
+              </div>
+              <dl className="inspection-grid" aria-label="Security inspection metadata">
+                <div>
+                  <dt>Protocol</dt>
+                  <dd>{securityInspectionStage?.protocol ?? "configured per path"}</dd>
+                </div>
+                <div>
+                  <dt>State</dt>
+                  <dd>{securityInspectionStage?.securityState ?? "observed"}</dd>
+                </div>
+                <div>
+                  <dt>Source</dt>
+                  <dd>{securityInspectionStage?.source ?? "architecture"}</dd>
+                </div>
+                <div>
+                  <dt>Destination</dt>
+                  <dd>{securityInspectionStage?.destination ?? "inspection target"}</dd>
+                </div>
+              </dl>
+              <div className="signals" aria-label="Supported security evidence">
+                {cybersecurityEvidence.supportedThemes.slice(0, 4).map((signal) => (
+                  <span className="signal" key={signal}>
+                    {signal}
                   </span>
                 ))}
               </div>

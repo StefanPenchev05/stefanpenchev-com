@@ -13,6 +13,17 @@ export type RequestStage = {
   nodeLabel: string;
 };
 
+export type SecurityInspectionStage = {
+  label: string;
+  concept: string;
+  trustZone: string;
+  securityState: string;
+  protocol?: string;
+  source?: string;
+  destination?: string;
+  description: string;
+};
+
 type ExperienceState = {
   activeChapter: number;
   progress: number;
@@ -20,12 +31,14 @@ type ExperienceState = {
   performanceTier: PerformanceTier;
   selectedProjectId: string;
   requestStage: RequestStage | null;
+  securityInspectionStage: SecurityInspectionStage | null;
   setActiveChapter: (activeChapter: number) => void;
   setProgress: (progress: number) => void;
   setReducedMotion: (reducedMotion: boolean) => void;
   setPerformanceTier: (performanceTier: PerformanceTier) => void;
   setSelectedProjectId: (selectedProjectId: string) => void;
   setRequestStage: (requestStage: RequestStage | null) => void;
+  setSecurityInspectionStage: (securityInspectionStage: SecurityInspectionStage | null) => void;
 };
 
 export const useExperienceStore = create<ExperienceState>((set) => ({
@@ -35,12 +48,14 @@ export const useExperienceStore = create<ExperienceState>((set) => ({
   performanceTier: "high",
   selectedProjectId: featuredProjects[0]?.id ?? "",
   requestStage: null,
+  securityInspectionStage: null,
   setActiveChapter: (activeChapter) => set({ activeChapter }),
   setProgress: (progress) => set({ progress }),
   setReducedMotion: (reducedMotion) => set({ reducedMotion }),
   setPerformanceTier: (performanceTier) => set({ performanceTier }),
   setSelectedProjectId: (selectedProjectId) => set({ selectedProjectId }),
-  setRequestStage: (requestStage) => set({ requestStage })
+  setRequestStage: (requestStage) => set({ requestStage }),
+  setSecurityInspectionStage: (securityInspectionStage) => set({ securityInspectionStage })
 }));
 
 export function chapterFromProgress(progress: number) {
