@@ -35,18 +35,43 @@ export type ArchitectureNodeType =
   | "client"
   | "api"
   | "service"
+  | "auth"
   | "database"
   | "cache"
+  | "queue"
+  | "worker"
+  | "external"
+  | "ai"
   | "ai-component"
+  | "network"
   | "network-protocol"
   | "runtime"
   | "unknown";
+
+export type ArchitectureGroupRole =
+  | "public"
+  | "application"
+  | "data"
+  | "internal"
+  | "external"
+  | "security"
+  | "ai";
+
+export type ArchitectureNodeStatus =
+  | "normal"
+  | "secure"
+  | "data"
+  | "external"
+  | "warning";
 
 export type ArchitectureNode = {
   id: string;
   label: string;
   type: ArchitectureNodeType;
   technology?: string;
+  group?: string;
+  semanticRole?: string;
+  status?: ArchitectureNodeStatus;
   confidence: "documented" | "conceptual" | "unconfirmed";
 };
 
@@ -54,13 +79,37 @@ export type ArchitectureEdge = {
   from: string;
   to: string;
   meaning: string;
+  direction?: "forward" | "bidirectional";
+  semanticRole?: string;
   confidence: "documented" | "conceptual" | "unconfirmed";
+};
+
+export type ArchitectureGroup = {
+  id: string;
+  label: string;
+  role: ArchitectureGroupRole;
+};
+
+export type RequestPathStep = {
+  nodeId: string;
+  state:
+    | "request sent"
+    | "authentication"
+    | "processing"
+    | "cache hit"
+    | "database query"
+    | "ai processing"
+    | "response";
+  label?: string;
+  description?: string;
 };
 
 export type ProjectArchitecture = {
   note: string;
+  groups?: ArchitectureGroup[];
   nodes: ArchitectureNode[];
   edges: ArchitectureEdge[];
+  requestPath?: RequestPathStep[];
 };
 
 export type PortfolioProject = {
@@ -162,12 +211,37 @@ export const projects: PortfolioProject[] = [
     architecture: {
       note:
         "Conservative conceptual model based only on documented technologies. Exact runtime relationships need confirmation.",
+      groups: [
+        {
+          id: "client-facing",
+          label: "Client-facing layer",
+          role: "public"
+        },
+        {
+          id: "application",
+          label: "Application layer",
+          role: "application"
+        },
+        {
+          id: "data-services",
+          label: "Data services",
+          role: "data"
+        },
+        {
+          id: "ai-services",
+          label: "AI integration",
+          role: "ai"
+        }
+      ],
       nodes: [
         {
           id: "react-client",
           label: "React Client",
           type: "client",
           technology: "React",
+          group: "client-facing",
+          semanticRole: "Therapist and patient interface",
+          status: "normal",
           confidence: "documented"
         },
         {
@@ -175,6 +249,9 @@ export const projects: PortfolioProject[] = [
           label: "Node.js Application/API",
           type: "api",
           technology: "Node.js",
+          group: "application",
+          semanticRole: "Application request handling",
+          status: "secure",
           confidence: "documented"
         },
         {
@@ -182,6 +259,9 @@ export const projects: PortfolioProject[] = [
           label: "MongoDB",
           type: "database",
           technology: "MongoDB",
+          group: "data-services",
+          semanticRole: "Persistent application data",
+          status: "data",
           confidence: "documented"
         },
         {
@@ -189,13 +269,19 @@ export const projects: PortfolioProject[] = [
           label: "Redis",
           type: "cache",
           technology: "Redis",
+          group: "data-services",
+          semanticRole: "Cache / fast data component",
+          status: "data",
           confidence: "documented"
         },
         {
           id: "python-ai",
           label: "Python AI Component",
-          type: "ai-component",
+          type: "ai",
           technology: "Python",
+          group: "ai-services",
+          semanticRole: "AI-generated image suggestion component",
+          status: "normal",
           confidence: "documented"
         }
       ],
@@ -204,25 +290,77 @@ export const projects: PortfolioProject[] = [
           from: "react-client",
           to: "node-api",
           meaning: "Application request path",
+          direction: "forward",
+          semanticRole: "request",
           confidence: "conceptual"
         },
         {
           from: "node-api",
           to: "mongodb",
           meaning: "Documented data component",
+          direction: "forward",
+          semanticRole: "database query",
           confidence: "conceptual"
         },
         {
           from: "node-api",
           to: "redis",
           meaning: "Documented cache/data component",
+          direction: "forward",
+          semanticRole: "cache lookup",
           confidence: "conceptual"
         },
         {
           from: "node-api",
           to: "python-ai",
           meaning: "Documented AI integration component; exact connection unconfirmed",
+          direction: "forward",
+          semanticRole: "ai processing",
           confidence: "unconfirmed"
+        }
+      ],
+      requestPath: [
+        {
+          nodeId: "react-client",
+          state: "request sent",
+          label: "Client request",
+          description: "The interface initiates a product workflow request."
+        },
+        {
+          nodeId: "node-api",
+          state: "processing",
+          label: "API handling",
+          description: "The application layer validates and routes the request."
+        },
+        {
+          nodeId: "redis",
+          state: "cache hit",
+          label: "Fast data lookup",
+          description: "Cache/data access is represented from documented Redis usage."
+        },
+        {
+          nodeId: "mongodb",
+          state: "database query",
+          label: "Persistent read/write",
+          description: "The request reaches the documented database component."
+        },
+        {
+          nodeId: "python-ai",
+          state: "ai processing",
+          label: "AI component",
+          description: "The documented Python AI component participates conceptually."
+        },
+        {
+          nodeId: "node-api",
+          state: "response",
+          label: "Response assembly",
+          description: "The API returns the workflow result to the client."
+        },
+        {
+          nodeId: "react-client",
+          state: "response",
+          label: "Client update",
+          description: "The interface receives the final application response."
         }
       ]
     }
@@ -646,11 +784,20 @@ export const skillGroups: SkillGroup[] = [
   }
 ];
 
-export const featuredProjects = projects.filter((project) => project.featured);
-export const secondaryProjects = projects.filter((project) => !project.featured);
+export const orderedProjects = [...projects].sort(
+  (a, b) => a.hierarchyRank - b.hierarchyRank
+);
+export const featuredProjects = orderedProjects.filter((project) => project.featured);
+export const secondaryProjects = orderedProjects.filter((project) => !project.featured);
 export const backendInfrastructureProject = projects.find(
   (project) => project.id === "artaicare-therapy-platform"
 );
+
+export const backendVisualizationConfig = {
+  defaultProjectId: backendInfrastructureProject?.id ?? featuredProjects[0]?.id ?? orderedProjects[0]?.id ?? "",
+  transitionRange: [0.2, 0.42],
+  activeRange: [0.28, 0.62]
+} as const;
 
 export const cybersecurityEvidence = {
   supportedThemes: [

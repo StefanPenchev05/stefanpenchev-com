@@ -1,12 +1,23 @@
 "use client";
 
 import { chapters } from "@/lib/data/chapters";
-import { profile } from "@/lib/data/portfolio";
+import { orderedProjects, profile } from "@/lib/data/portfolio";
+import {
+  buildSystemArchitecture,
+  getBackendVisualizationProject
+} from "@/lib/data/systemArchitecture";
 import { useExperienceStore } from "@/lib/scroll/useExperienceStore";
 
 export function DomOverlay() {
   const activeChapter = useExperienceStore((state) => state.activeChapter);
+  const selectedProjectId = useExperienceStore((state) => state.selectedProjectId);
+  const requestStage = useExperienceStore((state) => state.requestStage);
+  const setSelectedProjectId = useExperienceStore((state) => state.setSelectedProjectId);
   const chapter = chapters[activeChapter] ?? chapters[0];
+  const selectedProject =
+    orderedProjects.find((project) => project.id === selectedProjectId) ?? orderedProjects[0];
+  const backendProject = getBackendVisualizationProject(selectedProjectId);
+  const selectedArchitecture = buildSystemArchitecture(backendProject);
   const scrollToChapter = (index: number) => {
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     const target = maxScroll * (index / (chapters.length - 1));
@@ -34,7 +45,13 @@ export function DomOverlay() {
         ))}
       </nav>
       <section className="dom-overlay" aria-live="polite">
-        <article className={`chapter-panel ${activeChapter === 0 ? "chapter-panel--identity" : ""}`}>
+        <article
+          className={`chapter-panel ${activeChapter === 0 ? "chapter-panel--identity" : ""} ${
+            activeChapter === 1 ? "chapter-panel--project" : ""
+          } ${
+            activeChapter === 2 ? "chapter-panel--backend" : ""
+          }`}
+        >
           <p className="chapter-panel__eyebrow">{chapter.eyebrow}</p>
           {activeChapter === 0 ? (
             <>
@@ -50,6 +67,64 @@ export function DomOverlay() {
                 <button type="button" onClick={() => scrollToChapter(5)}>
                   Contact
                 </button>
+              </div>
+            </>
+          ) : activeChapter === 1 ? (
+            <>
+              <h2>{selectedProject.title}</h2>
+              <p className="technical-meta">
+                {selectedProject.featured ? "Featured" : "Secondary"} / {selectedProject.category} / {selectedProject.context}
+              </p>
+              <p>{selectedProject.description}</p>
+              <p className="project-impact">{selectedProject.impact}</p>
+              <div className="signals" aria-label="Project stack">
+                {selectedProject.stack.slice(0, 5).map((technology) => (
+                  <span className="signal" key={technology}>
+                    {technology}
+                  </span>
+                ))}
+              </div>
+              <div className="project-selector" aria-label="Select project">
+                {orderedProjects.map((project) => (
+                  <button
+                    className={project.id === selectedProject.id ? "is-selected" : ""}
+                    key={project.id}
+                    onClick={() => setSelectedProjectId(project.id)}
+                    type="button"
+                  >
+                    <span>{String(project.hierarchyRank).padStart(2, "0")}</span>
+                    {project.title}
+                  </button>
+                ))}
+              </div>
+              {selectedProject.link ? (
+                <a className="project-link" href={selectedProject.link} rel="noreferrer" target="_blank">
+                  Open project link
+                </a>
+              ) : null}
+            </>
+          ) : activeChapter === 2 ? (
+            <>
+              <h2>{backendProject.title}</h2>
+              <p className="technical-meta">
+                Running architecture / {selectedArchitecture.nodes.length} nodes / {selectedArchitecture.edges.length} links
+              </p>
+              <p>{selectedArchitecture.note}</p>
+              <div className="request-state" aria-label="Current request state">
+                <span>{requestStage?.state ?? "request path"}</span>
+                <strong>{requestStage?.label ?? "Architecture model ready"}</strong>
+                <p>
+                  {requestStage
+                    ? `${requestStage.nodeLabel}: ${requestStage.description}`
+                    : "Scroll through the backend core to follow the configured request path."}
+                </p>
+              </div>
+              <div className="signals" aria-label="Architecture components">
+                {selectedArchitecture.nodes.slice(0, 5).map((node) => (
+                  <span className="signal" key={node.id}>
+                    {node.technology ?? node.label}
+                  </span>
+                ))}
               </div>
             </>
           ) : (

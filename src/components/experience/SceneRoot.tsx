@@ -1,6 +1,5 @@
 import { CameraRig } from "@/components/experience/camera/CameraRig";
 import { LightingRig } from "@/components/experience/lighting/LightingRig";
-import { PacketFlow } from "@/components/experience/scenes/PacketFlow";
 import { OperationsWorkstation } from "@/components/experience/scenes/OperationsWorkstation";
 import { ProjectWall } from "@/components/experience/scenes/ProjectWall";
 import { BackendInfrastructure } from "@/components/experience/scenes/BackendInfrastructure";
@@ -23,7 +22,6 @@ export function SceneRoot() {
         <CybersecurityNetwork />
         <TechnologyConstellation />
         <ContactTerminal />
-        <PacketFlow />
       </group>
     </>
   );
