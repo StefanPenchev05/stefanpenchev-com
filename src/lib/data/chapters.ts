@@ -1,3 +1,5 @@
+import { profile } from "@/lib/data/portfolio";
+
 export type ChapterId =
   | "workstation"
   | "projects"
@@ -18,10 +20,9 @@ export const chapters: Chapter[] = [
   {
     id: "workstation",
     eyebrow: "01 / Operations Workstation",
-    title: "Stefan Penchev",
-    description:
-      "Full-stack web developer and cybersecurity engineer working across application logic, secure systems, infrastructure, and network-aware software.",
-    signals: ["TypeScript", "Backend APIs", "Security mindset"]
+    title: profile.name,
+    description: profile.positioning,
+    signals: ["Software Engineer", "Full-stack systems", "Security-aware engineering"]
   },
   {
     id: "projects",
@@ -42,10 +43,10 @@ export const chapters: Chapter[] = [
   {
     id: "security",
     eyebrow: "04 / Cybersecurity Network",
-    title: "Security boundaries made visible",
+    title: "Security-aware architecture",
     description:
-      "Network segments, trust boundaries, packet inspection, access checks, and alert paths show how engineering choices affect risk.",
-    signals: ["Networking", "Firewall rules", "Threat modeling"]
+      "Networking fundamentals, DNS, authentication, system boundaries, and university security study frame security as part of engineering practice.",
+    signals: ["Authentication", "DNS", "System boundaries"]
   },
   {
     id: "technology",
@@ -53,7 +54,7 @@ export const chapters: Chapter[] = [
     title: "A connected engineering toolkit",
     description:
       "The network abstracts into grouped technology clusters spanning frontend, backend, security, databases, infrastructure, and tooling.",
-    signals: ["React", "Node.js", "Linux", "PostgreSQL", "Cloud"]
+    signals: ["React", "Node.js", "Go", "MongoDB", "Redis"]
   },
   {
     id: "contact",
@@ -61,6 +62,6 @@ export const chapters: Chapter[] = [
     title: "Start a conversation",
     description:
       "The technical map converges into a focused terminal endpoint for contact, collaboration, and professional links.",
-    signals: ["Email", "GitHub", "LinkedIn"]
+    signals: ["Email", "Portfolio", "LinkedIn"]
   }
 ];

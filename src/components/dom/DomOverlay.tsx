@@ -1,6 +1,7 @@
 "use client";
 
 import { chapters } from "@/lib/data/chapters";
+import { profile } from "@/lib/data/portfolio";
 import { useExperienceStore } from "@/lib/scroll/useExperienceStore";
 
 export function DomOverlay() {
@@ -37,15 +38,11 @@ export function DomOverlay() {
           <p className="chapter-panel__eyebrow">{chapter.eyebrow}</p>
           {activeChapter === 0 ? (
             <>
-              <h1>Stefan Penchev</h1>
+              <h1>{profile.name}</h1>
               <div className="role-stack" aria-label="Professional roles">
-                <span>Full-Stack Developer</span>
-                <span>Cybersecurity Engineer</span>
+                <span>{profile.title}</span>
               </div>
-              <p>
-                I build secure, scalable web systems across backend architecture,
-                frontend interfaces, databases, networks, and operational tooling.
-              </p>
+              <p>{profile.positioning}</p>
               <div className="hero-actions">
                 <button type="button" onClick={() => scrollToChapter(1)}>
                   Explore Projects

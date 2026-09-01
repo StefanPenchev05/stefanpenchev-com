@@ -35,6 +35,7 @@ next-env.d.ts
 prototype-desktop.png
 workstation-visual-desktop.png
 workstation-visual-mobile.png
+content-integration-workstation.png
 
 # Package manager caches
 .npm/
