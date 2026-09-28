@@ -1,0 +1,136 @@
+.story {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 1.5%;
+}
+.copy {
+  min-width: 0;
+}
+.visualColumn {
+  min-width: 0;
+  position: relative;
+}
+.visual {
+  position: sticky;
+  top: calc(50svh - 290px);
+  height: 580px;
+  min-height: 440px;
+  display: flex;
+  flex-direction: column;
+}
+.sceneHeading {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
+  font-size: 8px;
+  color: var(--muted);
+}
+.scene {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+.scene canvas {
+  touch-action: pan-y;
+}
+.sceneFooter {
+  padding: 0 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+}
+.sceneFooter > span:last-child {
+  font-size: 10px;
+  color: var(--muted);
+}
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin: 22px 16px 0;
+  padding-top: 17px;
+  border-top: 1px solid var(--line);
+  font: 7px var(--mono);
+  letter-spacing: 0.09em;
+  color: #777974;
+}
+.legend i {
+  height: 1px;
+  width: 19px;
+  background: #484841;
+}
+.legend > span:nth-of-type(2) {
+  color: var(--accent);
+}
+@media (min-height: 1000px) {
+  .visual {
+    height: 650px;
+    top: calc(50svh - 325px);
+  }
+}
+@media (max-width: 1100px) and (min-width: 900px) {
+  .visual {
+    height: 500px;
+    top: calc(50svh - 250px);
+  }
+  .sceneFooter > span:last-child {
+    font-size: 8px;
+  }
+}
+@media (max-width: 899px) {
+  .story {
+    display: flex;
+    flex-direction: column;
+  }
+  .copy {
+    display: contents;
+  }
+  .visualColumn {
+    order: 2;
+  }
+  .copy > section:first-child {
+    order: 1;
+  }
+  .copy > section:last-child {
+    order: 3;
+  }
+  .visual {
+    position: relative;
+    top: auto;
+    height: 440px;
+    min-height: 0;
+    margin: 34px 0 30px;
+  }
+  .sceneHeading {
+    padding: 0;
+  }
+  .sceneFooter {
+    padding: 0;
+  }
+  .legend {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+@media (max-width: 480px) {
+  .visual {
+    height: 370px;
+    margin: 35px 0 18px;
+  }
+  .sceneHeading {
+    font-size: 7px;
+  }
+  .sceneFooter .eyebrow {
+    font-size: 7px;
+  }
+  .sceneFooter > span:last-child {
+    font-size: 9px;
+  }
+  .legend {
+    font-size: 6px;
+    gap: 13px;
+    margin-top: 16px;
+  }
+}

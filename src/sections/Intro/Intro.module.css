@@ -1,0 +1,43 @@
+.intro {
+  padding: 55px 0 95px;
+}
+.step {
+  min-height: 34svh;
+  padding: 55px 0 42px;
+  max-width: 570px;
+}
+.step h2 {
+  font-size: clamp(29px, 3.1vw, 46px);
+  font-weight: 450;
+  line-height: 1.23;
+  letter-spacing: -0.045em;
+  margin: 25px 0 16px;
+}
+.step h2 em {
+  font-style: normal;
+  color: var(--accent);
+}
+.step p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 350px;
+}
+@media (max-width: 899px) {
+  .intro {
+    padding: 30px 0 70px;
+  }
+  .step {
+    min-height: 0;
+    padding: 38px 0;
+    border-top: 1px solid var(--line);
+    max-width: none;
+  }
+  .step h2 {
+    font-size: clamp(29px, 5vw, 42px);
+    max-width: 600px;
+  }
+  .step p {
+    max-width: none;
+  }
+}

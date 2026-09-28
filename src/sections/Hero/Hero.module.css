@@ -1,0 +1,171 @@
+.hero {
+  min-height: 100svh;
+  min-height: max(780px, 100svh);
+  padding-top: 156px;
+  padding-bottom: 44px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.eyebrow {
+  display: flex;
+  gap: 26px;
+  font-size: 9px;
+}
+.identity {
+  margin-top: 64px;
+  font: 10px var(--mono);
+  letter-spacing: 0.16em;
+  color: var(--muted);
+}
+.hero h1 {
+  font-size: clamp(68px, 7.7vw, 122px);
+  font-weight: 450;
+  line-height: 1.02;
+  letter-spacing: -0.075em;
+  margin: 18px 0 27px;
+  position: relative;
+  z-index: 2;
+}
+.hero h1 > span {
+  color: var(--soft);
+}
+.disciplines {
+  font: 12px var(--mono);
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  color: #c1c0b9;
+  margin: 0;
+}
+.disciplines i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.statement {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--muted);
+  margin: 30px 0;
+}
+.workLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 25px;
+  font: 9px var(--mono);
+  letter-spacing: 0.09em;
+  width: max-content;
+  border-bottom: 1px solid #626057;
+  padding: 0 0 13px;
+}
+.workLink svg {
+  height: 17px;
+  width: 17px;
+  color: var(--accent);
+  transition: transform 0.3s var(--ease);
+}
+.workLink:hover svg {
+  transform: translate(3px, -3px);
+}
+.metadata {
+  display: flex;
+  gap: 42px;
+  font: 8px/1.9 var(--mono);
+  letter-spacing: 0.04em;
+  margin-top: auto;
+  padding-top: 55px;
+}
+.status {
+  position: relative;
+  padding-left: 14px;
+}
+.status i {
+  width: 4px;
+  height: 4px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: absolute;
+  left: 0;
+  top: 5px;
+}
+.scroll {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 425px;
+  font: 8px var(--mono);
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  margin-top: 32px;
+  padding-top: 17px;
+}
+.scroll > span:last-child {
+  font-size: 19px;
+  color: var(--text);
+}
+@media (min-width: 1500px) {
+  .hero {
+    padding-top: 180px;
+  }
+}
+@media (max-width: 1100px) {
+  .hero h1 {
+    font-size: 8.1vw;
+  }
+  .metadata {
+    gap: 25px;
+  }
+}
+@media (max-width: 899px) {
+  .hero {
+    min-height: auto;
+    padding-top: 130px;
+    padding-bottom: 24px;
+  }
+  .identity {
+    margin-top: 44px;
+  }
+  .hero h1 {
+    font-size: clamp(65px, 12.5vw, 108px);
+  }
+  .metadata {
+    padding-top: 25px;
+  }
+  .scroll {
+    display: none;
+  }
+  .statement {
+    margin: 23px 0;
+  }
+  .hero .eyebrow {
+    justify-content: space-between;
+  }
+}
+@media (max-width: 480px) {
+  .hero {
+    padding-top: 111px;
+  }
+  .identity {
+    margin-top: 32px;
+  }
+  .hero h1 {
+    font-size: 17vw;
+    margin: 15px 0 22px;
+  }
+  .disciplines {
+    font-size: 10px;
+  }
+  .statement {
+    font-size: 14px;
+  }
+  .metadata {
+    font-size: 7px;
+    gap: 24px;
+  }
+  .workLink {
+    font-size: 8px;
+  }
+}
