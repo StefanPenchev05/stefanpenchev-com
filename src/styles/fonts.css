@@ -6,3 +6,12 @@
   src: url("@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2")
     format("woff2-variations");
 }
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2")
+    format("woff2");
+}

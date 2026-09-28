@@ -17,6 +17,8 @@ export function About() {
             <img
               src={about.portrait.src}
               alt={about.portrait.alt}
+              width={about.portrait.width || 800}
+              height={about.portrait.height || 1000}
               loading="lazy"
             />
           )}

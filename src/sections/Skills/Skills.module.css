@@ -184,3 +184,15 @@
     font-size: 8px;
   }
 }
+
+.group button {
+  min-height: 44px;
+}
+.description {
+  font-size: 14px;
+}
+@media (hover: hover) {
+  .index[data-has-active="true"] .group:not([data-active="true"]) {
+    opacity: 1;
+  }
+}

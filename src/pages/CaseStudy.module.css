@@ -188,3 +188,14 @@
     font-size: 11px;
   }
 }
+
+.pagination a,
+.links a {
+  min-height: 44px;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.metadata dd {
+  overflow-wrap: anywhere;
+}

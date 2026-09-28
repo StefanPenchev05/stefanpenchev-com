@@ -11,7 +11,9 @@ import { Contact } from "./sections/Contact/Contact";
 import { Footer } from "./components/layout/Footer";
 import { RouteEffects } from "./components/layout/RouteEffects";
 import { Routes, Route, useLocation } from "react-router-dom";
-import CaseStudy, { NotFound } from "./pages/CaseStudy";
+import { lazy, Suspense } from "react";
+import { NotFound } from "./pages/NotFound";
+const CaseStudy = lazy(() => import("./pages/CaseStudy"));
 export function Home() {
   return (
     <>
@@ -30,19 +32,54 @@ export function App() {
   const location = useLocation();
   return (
     <SmoothScroll key={location.pathname}>
-      <a className="skip-link" href="#main">
+      <a
+        className="skip-link"
+        href="#main"
+        onClick={() => document.getElementById("main")?.focus()}
+      >
         Skip to content
       </a>
       <Navigation />
       <main id="main" tabIndex={-1}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/work/:slug" element={<CaseStudy />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense
+          fallback={
+            <p className="page-width route-loading" role="status">
+              Loading project…
+            </p>
+          }
+        >
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <Home />
+                  <RouteEffects />
+                </>
+              }
+            />
+            <Route
+              path="/work/:slug"
+              element={
+                <>
+                  <CaseStudy />
+                  <RouteEffects />
+                </>
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <>
+                  <NotFound />
+                  <RouteEffects />
+                </>
+              }
+            />
+          </Routes>
+        </Suspense>
       </main>
       <Footer />
-      <RouteEffects />
     </SmoothScroll>
   );
 }

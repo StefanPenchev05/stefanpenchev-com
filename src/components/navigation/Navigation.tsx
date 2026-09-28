@@ -1,3 +1,4 @@
+import { profile } from "../../data/profile";
 import { useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ScrollTrigger } from "../../animations/scroll/gsap";
@@ -49,9 +50,9 @@ export function Navigation() {
       <Link
         className={styles.name}
         to="/#index"
-        aria-label="Stefan Penchev — index"
+        aria-label={`${profile.name} — index`}
       >
-        STEFAN PENCHEV
+        {profile.name.toUpperCase()}
         <span className={styles.dot} />
       </Link>
       <nav aria-label="Main navigation">

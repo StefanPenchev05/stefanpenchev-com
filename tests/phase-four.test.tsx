@@ -55,20 +55,19 @@ it("About renders complete content without a portrait", () => {
   expect(doc.querySelectorAll("article")).toHaveLength(3);
   expect(doc.querySelector("h2")?.textContent).toBe(about.statement);
 });
-it("unverified About copy is visibly marked and does not invent location", () => {
+it("About uses verified interests without unverified personal claims", () => {
   const doc = html(<About />);
-  expect(
-    doc.body.textContent?.match(/PERSONAL DETAILS TO VERIFY/g),
-  ).toHaveLength(3);
+  expect(doc.body.textContent).not.toContain("PERSONAL DETAILS TO VERIFY");
+  expect(doc.body.textContent).toContain("cybersecurity");
   expect(doc.body.textContent).not.toContain("Luxembourg");
 });
-it("all default contact placeholders are noninteractive", () => {
-  const doc = html(<Contact />);
+it("disabled contact placeholders remain noninteractive", () => {
+  const items = contacts.map((item) => ({ ...item, enabled: false }));
+  const doc = html(<Contact items={items} />);
   expect(doc.querySelectorAll("a,button,input")).toHaveLength(0);
   expect(doc.querySelectorAll("[aria-disabled=true]")).toHaveLength(
-    contacts.length,
+    items.length,
   );
-  expect(contacts.every((item) => !item.enabled && !item.href)).toBe(true);
 });
 it("enabled contact items use the supplied verified href exactly", () => {
   const doc = html(

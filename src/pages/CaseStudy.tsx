@@ -1,8 +1,11 @@
+import { NotFound } from "./NotFound";
+import { ProjectMedia, validMedia } from "../components/ui/ProjectMedia";
 import { Link, useParams } from "react-router-dom";
-import { projects, type Project } from "../data/projects";
+import { projects, projectStatusLabels, type Project } from "../data/projects";
 import styles from "./CaseStudy.module.css";
 export function CaseStudyContent({ project }: { project: Project }) {
   const study = project.caseStudy;
+  const media = study.media?.filter(validMedia) || [];
   const concept = project.status === "concept";
   return (
     <>
@@ -11,7 +14,7 @@ export function CaseStudyContent({ project }: { project: Project }) {
           {project.number} /{" "}
           {concept
             ? "CONCEPT CASE STUDY / NOT COMPLETED WORK"
-            : project.status.toUpperCase()}
+            : projectStatusLabels[project.status]}
         </p>
         <h1 tabIndex={-1} data-route-focus>
           {project.title}
@@ -44,19 +47,21 @@ export function CaseStudyContent({ project }: { project: Project }) {
           )}
         </dl>
       </header>
-      <figure className={styles.preview}>
-        <img
-          src={project.preview.src}
-          alt={project.preview.alt}
-          width="960"
-          height="680"
+      <div className={styles.preview}>
+        <ProjectMedia
+          key={project.preview.src}
+          priority
+          media={{
+            type: "image",
+            ...project.preview,
+            width: 960,
+            height: 680,
+            caption: concept
+              ? "CONCEPT ILLUSTRATION / NOT A PRODUCT SCREENSHOT"
+              : project.preview.alt,
+          }}
         />
-        <figcaption>
-          {concept
-            ? "CONCEPT ILLUSTRATION / NOT A PRODUCT SCREENSHOT"
-            : project.preview.alt}
-        </figcaption>
-      </figure>
+      </div>
       <div className={styles.prose}>
         {study.overview && (
           <section>
@@ -110,15 +115,15 @@ export function CaseStudyContent({ project }: { project: Project }) {
         <section className={styles.media}>
           <h2>Screenshots</h2>
           {study.screenshots.map((item) => (
-            <figure key={item.src}>
-              <img
-                src={item.src}
-                alt={item.alt}
-                loading="lazy"
-                decoding="async"
-              />
-              {item.caption && <figcaption>{item.caption}</figcaption>}
-            </figure>
+            <ProjectMedia key={item.src} media={{ type: "image", ...item }} />
+          ))}
+        </section>
+      )}
+      {media.length > 0 && (
+        <section className={styles.media}>
+          <h2>Project media</h2>
+          {media.map((item) => (
+            <ProjectMedia key={item.src} media={item} />
           ))}
         </section>
       )}
@@ -141,18 +146,7 @@ export function CaseStudyContent({ project }: { project: Project }) {
     </>
   );
 }
-export function NotFound() {
-  return (
-    <div className={`page-width ${styles.page}`}>
-      <p className="eyebrow accent">404 / NOT FOUND</p>
-      <h1 tabIndex={-1} data-route-focus>
-        That page isn’t here.
-      </h1>
-      <p>Choose a project from the work index.</p>
-      <Link to="/#work">← BACK TO WORK</Link>
-    </div>
-  );
-}
+export { NotFound } from "./NotFound";
 export default function CaseStudy() {
   const { slug } = useParams();
   const index = projects.findIndex((project) => project.slug === slug);

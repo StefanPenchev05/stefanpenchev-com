@@ -161,3 +161,11 @@
     opacity: 0.35;
   }
 }
+
+.content summary {
+  min-height: 44px;
+  font-size: 11px;
+}
+.content > p:not(.classification) {
+  font-size: 14px;
+}

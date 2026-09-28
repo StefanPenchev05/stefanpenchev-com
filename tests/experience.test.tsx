@@ -3,6 +3,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, expect, it } from "vitest";
 import { Experience } from "../src/sections/Experience/Experience";
+import { ExperienceEntry } from "../src/sections/Experience/ExperienceEntry";
 import { experience } from "../src/data/experience";
 import { ScrollTrigger } from "../src/animations/scroll/gsap";
 import { setMedia } from "./setup";
@@ -32,21 +33,27 @@ it("renders every experience entry from typed data", () => {
   for (const entry of experience) {
     expect(html).toContain(entry.title);
     expect(html).toContain(entry.summary);
-    expect(html).toContain(entry.period);
+    if (entry.period) expect(html).toContain(entry.period);
   }
 });
 it("marks every unverified entry as a development placeholder with no invented dates or employers", () => {
-  expect(experience.length).toBeGreaterThan(0);
-  for (const entry of experience) {
-    expect(entry.placeholder).toBe(true);
-    expect(entry.id).toMatch(/^placeholder-/);
-    expect(entry.organization).toBeUndefined();
-    expect(entry.period).toBe("PERIOD TO VERIFY");
-  }
-  expect(
-    renderToStaticMarkup(<Experience />).match(/DEVELOPMENT PLACEHOLDER/g)
-      ?.length,
-  ).toBe(experience.length + 1);
+  const fixture = {
+    id: "placeholder",
+    title: "Unverified entry",
+    type: "other" as const,
+    summary: "Draft",
+    placeholder: true,
+  };
+  expect(renderToStaticMarkup(<ExperienceEntry entry={fixture} />)).toContain(
+    "DEVELOPMENT PLACEHOLDER",
+  );
+  expect(experience).toHaveLength(1);
+  expect(experience[0].organization).toBe("University of Luxembourg");
+  expect(experience[0].period).toBeUndefined();
+  expect(experience[0].type).toBe("education");
+  expect(renderToStaticMarkup(<Experience />)).not.toContain(
+    "DEVELOPMENT PLACEHOLDER",
+  );
 });
 it("cleans timeline triggers and mutations under StrictMode without pin spacers", async () => {
   await mount();
@@ -64,5 +71,10 @@ it("keeps reduced-motion experience readable and free of animation triggers", as
   expect(ScrollTrigger.getAll()).toHaveLength(0);
   expect(host.querySelectorAll("article")).toHaveLength(experience.length);
   expect(host.querySelector("[data-position]")).toBeNull();
-  expect(host.querySelectorAll("summary")).toHaveLength(experience.length);
+  expect(host.querySelectorAll("summary")).toHaveLength(
+    experience.filter(
+      (entry) =>
+        entry.details?.length || entry.technologies?.length || entry.link,
+    ).length,
+  );
 });

@@ -415,3 +415,39 @@
     display: none;
   }
 }
+
+.controls label {
+  min-width: 0;
+}
+.controls select {
+  font-size: 13px;
+}
+.readout {
+  font-size: 10px;
+}
+.server dl > div {
+  font-size: 10px;
+}
+.notes > div > p:not(:first-child) {
+  font-size: 14px;
+}
+@media (max-width: 560px) {
+  .controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .actions button {
+    flex: 1;
+  }
+  .actions {
+    width: 100%;
+  }
+  .concept h3 {
+    font-size: 12px;
+  }
+  .conceptBody .eyebrow {
+    font-size: 10px;
+  }
+  .readout {
+    overflow-wrap: anywhere;
+  }
+}

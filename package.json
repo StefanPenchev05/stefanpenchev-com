@@ -9,7 +9,8 @@
     "preview": "vite preview --host 127.0.0.1 --port 4173",
     "typecheck": "tsc -b",
     "format": "prettier --write src",
-    "test": "vitest run"
+    "test": "vitest run",
+    "analyze": "node scripts/analyze-bundle.mjs"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "latest",

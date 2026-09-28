@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { projects } from "../../data/projects";
+import { projects, projectStatusLabels } from "../../data/projects";
 import { Arrow } from "../../components/ui/Arrow";
 import { Link } from "react-router-dom";
 import { useProjectPreview } from "../../animations/transitions/useProjectPreview";
@@ -20,7 +20,7 @@ export function Projects() {
         <span className="eyebrow">
           <span className="accent">02 /</span> THE WORK
         </span>
-        <span className="eyebrow muted">SELECTED PROJECT CONCEPTS · 2026</span>
+        <span className="eyebrow muted">SELECTED PROJECT STUDIES</span>
       </div>
       <div className={styles.heading}>
         <h2 id="work-title">
@@ -86,7 +86,8 @@ export function Projects() {
                   {project.shortDescription}
                 </span>
                 <span className={styles.role}>
-                  {project.role} <span> / CONCEPT</span>
+                  {project.role}{" "}
+                  <span> / {projectStatusLabels[project.status]}</span>
                 </span>
               </span>
               <span className={styles.stack}>
@@ -94,7 +95,7 @@ export function Projects() {
                   <span key={tech}>{tech}</span>
                 ))}
               </span>
-              <span className={styles.year}>{project.year}</span>
+              <span className={styles.year}>{project.year || "—"}</span>
               <Arrow diagonal className={styles.arrow} />
               <span className={styles.mobilePreview}>
                 <img

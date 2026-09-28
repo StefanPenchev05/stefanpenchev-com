@@ -1,29 +1,10 @@
-import {
-  Component,
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-  type RefObject,
-} from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { MathUtils } from "three";
 import { ArchitectureModel } from "../ArchitectureModel/ArchitectureModel";
 import { StaticArchitecture } from "./StaticArchitecture";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import type { SceneMotion } from "./types";
-class WebGLBoundary extends Component<
-  { children: ReactNode },
-  { failed: boolean }
-> {
-  state = { failed: false };
-  static getDerivedStateFromError() {
-    return { failed: true };
-  }
-  render() {
-    return this.state.failed ? <StaticArchitecture /> : this.props.children;
-  }
-}
 function CameraRig({
   motion,
   reduced,
@@ -60,6 +41,13 @@ function CameraRig({
   return null;
 }
 export default function Scene({ motion }: { motion: RefObject<SceneMotion> }) {
+  const contextCleanup = useRef<(() => void) | null>(null);
+  useEffect(
+    () => () => {
+      contextCleanup.current?.();
+    },
+    [],
+  );
   const root = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
   const [lost, setLost] = useState(false);
@@ -86,45 +74,41 @@ export default function Scene({ motion }: { motion: RefObject<SceneMotion> }) {
   if (reduced || lost) return <StaticArchitecture />;
   return (
     <div ref={root} className="webgl-scene" aria-hidden="true">
-      <WebGLBoundary>
-        <Canvas
-          dpr={[1, 1.5]}
-          frameloop={visible ? "always" : "never"}
-          camera={{
-            position: [4.3, 4.1, 7.5],
-            fov: mobile ? 39 : 36,
-            near: 0.1,
-            far: 35,
-          }}
-          gl={{ antialias: true, alpha: true, powerPreference: "low-power" }}
-          fallback={<StaticArchitecture />}
-          onCreated={({ gl }) => {
-            gl.domElement.addEventListener(
-              "webglcontextlost",
-              () => setLost(true),
-              { once: true },
-            );
-          }}
-        >
-          <ambientLight intensity={1.15} />
-          <directionalLight
-            position={[2, 6, 4]}
-            intensity={2.6}
-            color="#fff2dd"
-          />
-          <directionalLight
-            position={[-4, 2, -3]}
-            intensity={1.2}
-            color="#b9c2c6"
-          />
-          <CameraRig motion={motion} reduced={reduced} mobile={mobile} />
-          <ArchitectureModel
-            motion={motion}
-            reduced={reduced}
-            mobile={mobile}
-          />
-        </Canvas>
-      </WebGLBoundary>
+      <Canvas
+        dpr={[1, 1.5]}
+        frameloop={visible ? "always" : "never"}
+        camera={{
+          position: [4.3, 4.1, 7.5],
+          fov: mobile ? 39 : 36,
+          near: 0.1,
+          far: 35,
+        }}
+        gl={{ antialias: true, alpha: true, powerPreference: "low-power" }}
+        fallback={<StaticArchitecture />}
+        onCreated={({ gl }) => {
+          contextCleanup.current?.();
+          const onLost = () => setLost(true);
+          gl.domElement.addEventListener("webglcontextlost", onLost, {
+            once: true,
+          });
+          contextCleanup.current = () =>
+            gl.domElement.removeEventListener("webglcontextlost", onLost);
+        }}
+      >
+        <ambientLight intensity={1.15} />
+        <directionalLight
+          position={[2, 6, 4]}
+          intensity={2.6}
+          color="#fff2dd"
+        />
+        <directionalLight
+          position={[-4, 2, -3]}
+          intensity={1.2}
+          color="#b9c2c6"
+        />
+        <CameraRig motion={motion} reduced={reduced} mobile={mobile} />
+        <ArchitectureModel motion={motion} reduced={reduced} mobile={mobile} />
+      </Canvas>
     </div>
   );
 }

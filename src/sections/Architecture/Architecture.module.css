@@ -582,3 +582,26 @@
     min-height: 0;
   }
 }
+
+.details > p,
+.mobileDetails > p,
+.step > p {
+  font-size: 14px;
+}
+.nextLink {
+  min-height: 44px;
+}
+@media (max-width: 899px) {
+  .nodeTechnology {
+    font-size: 11px;
+  }
+  .diagramLegend {
+    font-size: 10px;
+  }
+  .conceptNote {
+    font-size: 10px;
+  }
+  .diagramHeader > span {
+    font-size: 9px;
+  }
+}

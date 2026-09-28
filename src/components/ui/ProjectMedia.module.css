@@ -1,0 +1,29 @@
+.figure {
+  margin: 0 0 32px;
+}
+.frame {
+  width: 100%;
+  background: #101214;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.frame img,
+.frame video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.unavailable {
+  font: 12px/1.8 var(--mono);
+  color: var(--muted);
+  padding: 24px;
+  margin: 0;
+}
+.figure figcaption {
+  font: 11px/1.8 var(--mono);
+  color: var(--muted);
+  margin-top: 14px;
+  max-width: 75ch;
+}

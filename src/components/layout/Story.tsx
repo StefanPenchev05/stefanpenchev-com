@@ -1,3 +1,5 @@
+import { SceneBoundary } from "../../three/Scene/SceneBoundary";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { lazy, Suspense, useRef } from "react";
 import { Hero } from "../../sections/Hero/Hero";
 import { Intro } from "../../sections/Intro/Intro";
@@ -7,6 +9,7 @@ import { StaticArchitecture } from "../../three/Scene/StaticArchitecture";
 import styles from "./Story.module.css";
 const Scene = lazy(() => import("../../three/Scene/Scene"));
 export function Story() {
+  const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
   const root = useRef<HTMLDivElement>(null);
   const motion = useRef<SceneMotion>({ progress: 0, pointerX: 0, pointerY: 0 });
   useStoryScroll(root, motion);
@@ -37,9 +40,11 @@ export function Story() {
             <span className="accent">[ CONCEPT ]</span>
           </div>
           <div className={styles.scene}>
-            <Suspense fallback={<StaticArchitecture />}>
-              <Scene motion={motion} />
-            </Suspense>
+            <SceneBoundary>
+              <Suspense fallback={<StaticArchitecture />}>
+                {reduced ? <StaticArchitecture /> : <Scene motion={motion} />}
+              </Suspense>
+            </SceneBoundary>
           </div>
           <div className={styles.sceneFooter}>
             <span className="eyebrow">A REQUEST. FIVE LAYERS.</span>

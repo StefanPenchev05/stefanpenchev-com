@@ -169,3 +169,24 @@
     font-size: 8px;
   }
 }
+
+.workLink,
+.scroll {
+  min-height: 44px;
+}
+.workLink {
+  font-size: 10px;
+}
+.metadata {
+  font-size: 11px;
+}
+
+.metadata {
+  align-items: start;
+  display: grid;
+  grid-template-columns: minmax(90px, 0.7fr) minmax(0, 1.5fr);
+  gap: 24px;
+}
+.status {
+  max-width: 40ch;
+}

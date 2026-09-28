@@ -11,7 +11,8 @@ export function Skills() {
     >
       <div className={styles.meta}>
         <span className="eyebrow">
-          <span className="accent">04 /</span> TECHNOLOGIES / METHODS / SYSTEMS
+          <span className="accent">04 /</span> TECHNOLOGIES / INTERESTS /
+          SYSTEMS
         </span>
         <span className="eyebrow muted">AN INDEX, NOT A SCORECARD</span>
       </div>
@@ -86,8 +87,8 @@ export function Skills() {
         ))}
       </div>
       <p className={styles.note}>
-        Different tools. Shared principles: clear boundaries, thoughtful
-        trade-offs, maintainable systems.
+        An index of interests and technologies, not a claim of proficiency in
+        every area.
       </p>
     </section>
   );

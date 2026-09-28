@@ -1,11 +1,27 @@
+export type ProjectMedia = {
+  type: "image" | "video";
+  src: string;
+  alt?: string;
+  caption?: string;
+  width?: number;
+  height?: number;
+  poster?: string;
+  captions?: string;
+};
+export const projectStatusLabels = {
+  completed: "COMPLETED",
+  "in-progress": "IN PROGRESS",
+  concept: "CONCEPT",
+} as const;
 export type CaseStudy = {
-  overview: string;
+  overview?: string;
   problem?: string;
   solution?: string;
   myRole?: string;
   architecture?: { nodes: string[]; description: string };
   technicalChallenges?: string[];
   screenshots?: { src: string; alt: string; caption?: string }[];
+  media?: ProjectMedia[];
   result?: string;
 };
 export type Project = {
@@ -13,12 +29,12 @@ export type Project = {
   slug: string;
   title: string;
   shortDescription: string;
-  year: string;
-  role: string;
+  year?: string;
+  role?: string;
   technologies: string[];
   category: string;
   preview: { src: string; alt: string };
-  status: "concept" | "in-progress" | "published";
+  status: "concept" | "in-progress" | "completed";
   caseStudy: CaseStudy;
   links?: { github?: string; live?: string };
 };
@@ -29,7 +45,6 @@ export const projects: Project[] = [
     slug: "personal-organizer",
     title: "Personal Organizer",
     shortDescription: "A little less friction. A little more focus.",
-    year: "2026",
     role: "Full-stack development",
     technologies: ["Go", "React", "PostgreSQL", "Docker"],
     category: "PRODUCTIVITY / WEB APPLICATION",
@@ -62,7 +77,6 @@ export const projects: Project[] = [
     slug: "request-atlas",
     title: "Request Atlas",
     shortDescription: "Following the request, beyond the browser.",
-    year: "2026",
     role: "Backend & API design",
     technologies: ["Node.js", "TypeScript", "Redis"],
     category: "DEVELOPER TOOLS / OBSERVABILITY",
@@ -91,7 +105,6 @@ export const projects: Project[] = [
     slug: "local-context",
     title: "Local Context",
     shortDescription: "Your documents. A smaller, local intelligence.",
-    year: "2026",
     role: "AI & backend engineering",
     technologies: ["Python", "Llama", "PostgreSQL"],
     category: "AI / LOCAL-FIRST RESEARCH",
@@ -126,7 +139,6 @@ export const projects: Project[] = [
     slug: "dispatch",
     title: "Dispatch",
     shortDescription: "Background work, brought into the foreground.",
-    year: "2026",
     role: "Systems & infrastructure",
     technologies: ["Go", "Redis", "Docker", "React"],
     category: "INFRASTRUCTURE / JOB PROCESSING",

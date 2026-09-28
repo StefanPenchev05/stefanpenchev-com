@@ -1,9 +1,9 @@
 import { useLayoutEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { projects } from "../../data/projects";
-const defaultTitle = "Stefan Penchev — Full-Stack Developer";
-const defaultDescription =
-  "A developer portfolio exploring interfaces, backend architecture and engineering experiments.";
+import { profile, site } from "../../data/profile";
+const defaultTitle = site.title;
+const defaultDescription = site.description;
 export function RouteEffects() {
   const location = useLocation();
   useLayoutEffect(() => {
@@ -11,10 +11,10 @@ export function RouteEffects() {
       (item) => location.pathname === `/work/${item.slug}`,
     );
     const title = project
-      ? `${project.title}${project.status === "concept" ? " — Concept" : ""} | Stefan Penchev`
+      ? `${project.title}${project.status === "concept" ? " — Concept" : ""} | ${profile.name}`
       : location.pathname === "/"
         ? defaultTitle
-        : "Page not found | Stefan Penchev";
+        : `Page not found | ${profile.name}`;
     const description = project
       ? `${project.status === "concept" ? "Concept study: " : ""}${project.shortDescription}`
       : defaultDescription;

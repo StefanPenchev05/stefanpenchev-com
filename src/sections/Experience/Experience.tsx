@@ -24,9 +24,6 @@ export function Experience() {
           and work on.
         </p>
       </header>
-      <p className={styles.notice}>
-        DEVELOPMENT PLACEHOLDERS / VERIFIED HISTORY TO BE ADDED
-      </p>
       <div ref={timeline} className={styles.timeline}>
         <div className={styles.track} aria-hidden="true">
           <span data-timeline-progress />
