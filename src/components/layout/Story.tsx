@@ -34,7 +34,7 @@ export function Story() {
         >
           <div className={`eyebrow ${styles.sceneHeading}`}>
             <span>SYSTEM STUDY — 001</span>
-            <span className="accent">[ LIVE ]</span>
+            <span className="accent">[ CONCEPT ]</span>
           </div>
           <div className={styles.scene}>
             <Suspense fallback={<StaticArchitecture />}>

@@ -29,7 +29,7 @@ export function Hero() {
         <span>
           BASED IN LUXEMBOURG
           <br />
-          <span className="muted">49.6116° N / 6.1319° E</span>
+          <span className="muted">BACKEND / SYSTEMS / WEB</span>
         </span>
         <span className={styles.status}>
           <i />
