@@ -1,3 +1,4 @@
+import { RouteBoundary } from "./components/layout/RouteBoundary";
 import { SmoothScroll } from "./components/layout/SmoothScroll";
 import { Navigation } from "./components/navigation/Navigation";
 import { Story } from "./components/layout/Story";
@@ -41,43 +42,45 @@ export function App() {
       </a>
       <Navigation />
       <main id="main" tabIndex={-1}>
-        <Suspense
-          fallback={
-            <p className="page-width route-loading" role="status">
-              Loading project…
-            </p>
-          }
-        >
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <>
-                  <Home />
-                  <RouteEffects />
-                </>
-              }
-            />
-            <Route
-              path="/work/:slug"
-              element={
-                <>
-                  <CaseStudy />
-                  <RouteEffects />
-                </>
-              }
-            />
-            <Route
-              path="*"
-              element={
-                <>
-                  <NotFound />
-                  <RouteEffects />
-                </>
-              }
-            />
-          </Routes>
-        </Suspense>
+        <RouteBoundary>
+          <Suspense
+            fallback={
+              <p className="page-width route-loading" role="status">
+                Loading project…
+              </p>
+            }
+          >
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <>
+                    <Home />
+                    <RouteEffects />
+                  </>
+                }
+              />
+              <Route
+                path="/work/:slug"
+                element={
+                  <>
+                    <CaseStudy />
+                    <RouteEffects />
+                  </>
+                }
+              />
+              <Route
+                path="*"
+                element={
+                  <>
+                    <NotFound />
+                    <RouteEffects />
+                  </>
+                }
+              />
+            </Routes>
+          </Suspense>
+        </RouteBoundary>
       </main>
       <Footer />
     </SmoothScroll>

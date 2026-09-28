@@ -1,181 +1,153 @@
-# Stefan Penchev — portfolio foundation
+# Stefan Penchev — portfolio
 
-Phases one and two of the portfolio: Swiss editorial typography, restrained architecture sculpture, scroll-driven introduction and an editorial project list. Built fresh with Vite, React, TypeScript, CSS Modules, React Three Fiber / Drei, GSAP ScrollTrigger, Lenis and Zustand.
+## Overview
 
-## Run
+An editorial full-stack developer portfolio with a scroll-linked architecture sculpture, project studies, a systems diagram, engineering interests, education, a load-balancer experiment, About and direct contact links. The existing near-black, muted-amber design is preserved.
+
+The owner's location, availability, contacts, education and interests are verified. Four project studies and five Lab concepts are still explicitly labelled concepts. This is deployable static code, not a claim that content and real-device QA are finished. Nothing has been deployed.
+
+## Stack
+
+React, TypeScript, Vite, React Router, CSS Modules, GSAP/ScrollTrigger, Lenis, lazy Three.js/React Three Fiber/Drei, local Manrope and IBM Plex Mono fonts. Vitest + jsdom provide semantic and lifecycle tests. No backend, external API keys or environment variables are required.
+
+## Local development
+
+Use a Node version supported by the locked Vite version (Node 22.12+ or a compatible newer release). Install exact dependencies from the lockfile:
 
 ```sh
-npm install
-npm run dev       # http://localhost:3000
-npm run build     # TypeScript + production bundle
-npm run preview   # production preview on http://127.0.0.1:4173
-npm test          # lifecycle and content integrity checks
+npm ci
+npm run dev
 ```
 
-## Implemented scope
-
-- Self-hosted Manrope / IBM Plex Mono, warm off-white type, near-black background and one muted amber accent.
-- Fixed, compacting navigation. Index and Work are functional; About and Contact are explicitly inactive until their later sections exist.
-- Full-stack hero with Luxembourg / availability metadata, stronger body-copy contrast, larger readable sculpture labels and improved desktop framing. The headline is unchanged.
-- Lightweight five-node architecture sculpture: Client → API → Service → Database / Cache. Slow independent drift, constrained pointer camera response and scroll-driven separation / connections.
-- Four readable intro passages beside the sticky visual. This is content-backed CSS sticky pinning, synchronized by GSAP; no artificial pin spacers are inserted.
-- Four data-driven project concepts. Desktop has a bounded pointer-following preview; touch and smaller screens have inline illustrations. Click or keyboard activation opens a native modal case-study draft.
-- Extensible typed case-study data for overview, problem, solution, role, architecture, technologies, challenges, screenshots, result and real links.
-- Beyond the Interface: semantic HTML/SVG architecture, accessible node inspection, a scroll-driven cache-miss request/response path and a vertical mobile version.
-- Engineering Index: six typed responsibility groups, always-readable technology lists and category-level descriptions.
-
-The project entries and their original SVG previews are **illustrative placeholders**, not completed-project claims. Replace them in `src/data/projects.ts` before publishing a personal portfolio. The actual future case-study URL can be derived from each stable `slug`. No email address, repository, client, metric or employment history has been invented.
+Development runs at http://127.0.0.1:3000. `npm run build` writes `dist/`; `npm run preview` serves that build at http://127.0.0.1:4173. Do not open source index.html directly: Vite resolves modules and injects profile metadata.
 
 ## Architecture
 
-```text
-src/
-├── App.tsx
-├── main.tsx
-├── animations/
-│   ├── scroll/            # GSAP registration and story lifecycle
-│   └── transitions/       # pointer-following project preview
-├── components/
-│   ├── layout/            # Lenis owner and narrative composition
-│   ├── navigation/        # compacting fixed navigation
-│   ├── typography/        # typography guidance
-│   └── ui/                # small shared primitives
-├── sections/
-│   ├── Hero/
-│   ├── Intro/
-│   ├── Projects/          # editorial rows and native dialog
-│   ├── Architecture/     # HTML/SVG schematic, node details, responsive CSS
-│   ├── Skills/           # data-driven engineering index
-│   ├── Experience/       # editorial timeline with verified-data placeholders
-│   ├── Playground/       # Lab notebook and load-balancer simulation
-│   ├── About/            # next-phase TODO
-│   └── Contact/          # next-phase TODO
-├── three/
-│   ├── Scene/            # lazy canvas, camera and static SVG fallback
-│   ├── ArchitectureModel/# low-poly nodes and mutable connection buffer
-│   └── effects/          # intentionally no postprocessing
-├── data/                 # projects, architecture, skills, experience and experiments
-├── hooks/                # responsive media subscription
-├── store/                # discrete modal selection only
-└── styles/               # tokens, global rules and local fonts
-public/
-├── favicon.svg
-└── previews/             # original illustrative project images
-scripts/create-previews.py
-tests/                    # real GSAP lifecycle and semantic tests under DOM emulation
+- `src/App.tsx`: home composition and routes; smooth-scroll ownership resets on pathname changes.
+- `src/components/layout`: Lenis lifecycle, route focus/metadata, loading error boundary, footer and Story.
+- `src/sections`: the existing nine content sections; no new section was added during production preparation.
+- `src/data`: editable typed profile, project, architecture, interests, education and experiment data.
+- `src/animations`: scoped GSAP effects with cleanup; scroll progress mutates refs/DOM rather than React state.
+- `src/three`: one lazy scene; reduced motion and failures use the static SVG.
+- `src/pages`: lazy case-study route and safe not-found content.
+- `src/sections/Playground/LoadBalancer/simulation`: pure routing functions and a ref-owned logical clock; one timer only while running, visible and in an active tab.
+
+## Testing
+
+```sh
+npm test
+npm run build
+npm run analyze
 ```
 
-## Scroll ownership and cleanup
+58 tests pass. The previous 48 cases remain; content-dependent assertions now reflect owner-verified data, while placeholder/disabled-contact behavior is still covered with fixtures. Added production tests cover three project statuses, optional/invalid media, image failure layout, verified and invalid contacts, home metadata, direct lazy route focus/skip link, static WebGL failure, reduced motion and video cleanup.
 
-Lenis owns desktop wheel smoothing and runs on GSAP's ticker. Touch and reduced-motion devices use native scrolling. `SmoothScroll` removes its ticker callback and destroys Lenis on cleanup. GSAP lag smoothing is disabled at registration per Lenis integration guidance. All story triggers belong to `gsap.matchMedia()` and are reverted when unmounted or the desktop breakpoint stops matching. Navigation owns and kills its single trigger. Preview tweens belong to a reverted GSAP context. Fonts trigger a refresh once ready; ScrollTrigger handles resize refreshes.
+`npm run analyze` uses Vite's own generateBundle hook; it adds no analyzer dependency and writes no application bundle. `BUNDLE_ANALYSIS.json` records before/after snapshots. Package attribution uses **pre-minification rendered module bytes**, not additive gzip costs. Gzip computed by the script may differ slightly from Vite's reporter.
 
-The sticky scene releases at the end of the actual introduction. Below 900px the composition becomes Hero → inline sculpture → Intro, with no sticky pinning. Four text passages determine the introduction's height; there are no empty spacer sections.
+DOM tests cannot verify overflow, paint, layout shift, browser-generated keyboard events or GPU performance. See `QA_NOTES.md` and `PRODUCTION_CHECKLIST.md` for unchecked browser/device work. The browser tool's policy check currently blocks visual QA; no bypass was attempted.
 
-## Accessibility and rendering budget
+## Content model
 
-Semantic sections, real links/buttons, a skip link and visible focus states are included. The native dialog handles focus trapping and Escape; the caller is restored by the browser. The static SVG explains the same architecture without requiring WebGL. Reduced motion selects that static visual and disables Lenis, parallax and scroll fades. A WebGL error/context-loss fallback leaves the portfolio usable.
+`src/data/profile.ts` owns the name, headline, Luxembourg location, owner-supplied availability, email and social URLs. Contacts derive from it; disabled/empty/invalid destinations never render as links. Site title/description feed both Vite's static HTML transform and route metadata.
 
-The scene is lazy-loaded independently of the main UI. DPR is bounded at 1–1.5. There are five nodes, shared database geometry/material, two directional lights and one ambient light, no shadows, no postprocessing, and no particle field. Connections use one reusable buffer and one draw call. Frame-loop updates mutate refs only. IntersectionObserver and page visibility stop rendering offscreen or in a background tab. Mobile uses fewer cylinder segments and omits database edges.
+`src/data/experience.ts` contains only verified education: Bachelor student, University of Luxembourg, Luxembourg. The exact official programme title and dates are omitted until supplied. About and Skills contain verified interests rather than invented proficiency or employment claims.
 
-The Three.js scene still creates a large lazy chunk (approximately 249 kB gzip). Vite's size warning is retained rather than hidden. It is not part of the initial UI chunk. Hardware FPS needs a real browser/device profile; no 60 FPS guarantee is claimed.
+Project status is explicit: `completed`, `in-progress` or `concept`. All current projects are concepts. Do not change status based on missing fields. Unknown years were removed. Optional study fields (`overview`, `problem`, `solution`, `myRole`, `architecture`, `technicalChallenges`, `result`, `screenshots`, `media`) render only when supplied. Results must be factual implemented capabilities or evidence-backed measurements, never invented efficiency/revenue/user claims. Profile GitHub is not a substitute for a project repository URL.
 
-## Phase-two interaction and lifecycle
+`CONTENT_AUDIT.md` inventories unresolved fields with file, property, current value and needed information. Concept disclosures are intentional and remain public; unverified personal placeholders are omitted.
 
-The hero keeps its original layout and sticky composition. A modest camera reframing, 1.12 model scale, clearer node spacing and larger canvas labels target roughly 1.25–1.4 times the previous desktop presence. Passage positions drive Client → API → Service → Data emphasis; there is no added scroll space. The non-WebGL illustration now shows all five nodes and the same topology.
+## Project media
 
-`src/data/architecture.ts` is the diagram's source of truth. Seven native buttons inspect the client, API, authentication, service, cache, database and optional background worker. Hover/focus highlights immediate neighbors and changes the contextual region. Mobile switches to a vertical semantic list with inline, tap-selected details. Request/response information and all five narrative steps remain available without animation.
+Place real assets under `public/projects/<stable-slug>/`. Existing `public/previews/*.svg` files remain labelled concept illustrations.
 
-`useArchitectureScroll` owns one responsive ScrollTrigger and mutates only animation attributes. The small SVG packet follows a precomputed orthogonal route: cache check → miss → database query → response. Reduced motion skips packet movement and highlights each path leg discretely. CSS sticky is disabled on mobile and short desktop viewports; no GSAP pinning or empty spacer sections are used. Context cleanup removes triggers and attributes. Continuous progress never enters React state.
+`caseStudy.media` accepts:
 
-Skills use `src/data/skills.ts`, with the exact six groups requested. Hover/focus/tap reveals a category description while technology lists stay visible. Simple CSS transitions handle category emphasis. Related node IDs are typed metadata only, with no cross-section state coupling.
+```ts
+{
+  type: "image" | "video",
+  src: string,
+  alt?: string,
+  caption?: string,
+  width?: number,
+  height?: number,
+  poster?: string,
+  captions?: string // English WebVTT track for meaningful audio
+}
+```
 
-## Validation
+Supply descriptive alt/label and true dimensions; entries without a usable source or alt are rejected. Missing dimensions reserve a 1600:1000 area, so supply the real ratio before publishing. Invalid entries are omitted from the gallery; failed media displays a restrained fallback. Legacy `screenshots` remain compatible with the same image component.
 
-Phase-two validation: **16 passing tests**, including the original five. Checks cover server-rendered architecture content, native keyboard buttons and contextual details, immediate dependencies, reduced-motion packet suppression (including both storage branches), StrictMode cleanup, desktop/mobile/motion breakpoint changes, mobile inline details without pinning, route continuity and round-trip order, typed skills rendering and expansion, and hero narrative emphasis.
+Images use semantic img, dimensions, decoding async and lazy loading below the first preview. Compress real screenshots into WebP/AVIF where appropriate without making text unreadable. Native videos use controls, playsInline and preload none, with **no autoplay**. Playback pauses below 10% visibility or when the tab hides. Supply posters, captions and a transcript/caption when needed. No gallery dependency or global media preload exists.
 
-`npm run build`: passes TypeScript and production bundling. No dependencies were added in phase two. The main JavaScript bundle increased from approximately 125.8 kB to 130.4 kB gzip; the new sections add no Three.js import. The existing lazy scene remains approximately 249 kB gzip, and its size warning is retained.
+## Accessibility
 
-These are code and real-GSAP tests in DOM emulation. They do not measure browser layout or GPU performance. Static review confirms natural content heights, no spacer sections, mobile CSS without sticky pinning, and semantic content independent of the SVG.
+Named landmarks, one clear route H1, a focusable main/skip link, visible focus outlines, native selects/buttons/details and semantic contact links. Lazy route focus occurs after content commits. Reduced motion avoids loading the scene and disables nonessential CSS movement/Lenis; Lab counters remain functional. The simulation does not announce every packet. Static SVG communicates architecture when WebGL fails. Route/media failures show short public messages, not stack traces.
 
-Visual browser verification remains blocked: the computer-use browser could not verify its required admin policy, including on retry. Desktop/mobile screenshots, actual perceived sculpture size and frame timings remain to be checked when that browser path is available. No alternate browser path was used to bypass it; no FPS claim is made.
+Targeted QA fixes include 44px disclosure/CTA targets, a single-column narrow Lab control layout, readable functional metadata, less text dimming, wrapping long contact values and a short-desktop sticky escape. Prose remains bounded around 68ch. Actual contrast, overflow, touch, zoom and screen-reader testing remain necessary.
 
-## Phase three — Experience and Lab
+## Performance
 
-Experience (`#experience`, section 05) is an editorial timeline driven by `src/data/experience.ts`. All three entries explicitly identify themselves as development placeholders; there are no invented dates, employers or achievements. Native details controls disclose entry notes. One ScrollTrigger fills the line and marks the current entry without React scroll updates, pinning or spacer elements. Reduced motion removes this trigger. Disclosure toggles refresh layout measurements, and the context and toggle listener are removed on unmount.
+Vite production report after this pass:
 
-Lab (`#lab`, section 06) contains one working load-balancer prototype and five explicitly unimplemented concept entries, sourced from `src/data/experiments.ts`. Native selects choose round robin, random or least connections; 2–5 servers; and low/medium/high request rates. Changing topology resets and pauses the simulation. About and Contact remain inactive.
+| Asset | Gzip |
+| --- | ---: |
+| Initial JavaScript | 148.57 kB |
+| Lazy case-study code | 2.12 kB |
+| Lazy 3D scene | 249.31 kB |
+| Initial CSS | 9.69 kB |
+| Lazy media CSS | approximately 0.25 kB |
 
-### Simulation architecture
+The prior initial JS was 149.15 kB gzip; improvement is modest, about 0.6 kB net despite adding media/error handling. Case-study code is isolated into one meaningful route chunk, not dozens of tiny files. Three.js remains outside the initial static import graph; it loads on the animated home route, never on direct case-study entry. Reduced motion uses SVG before the lazy import is initialized.
 
-`LoadBalancer/simulation/algorithms.ts` holds pure routing functions. `engine.ts` owns logical time, jobs, completion accounting and a capped eight-event log. `useLoadBalancerSimulation.ts` keeps mutable engine state in a ref and publishes snapshots only when assignments or completions change. A single 100 ms interval runs only while started, visible and in an active document. Pausing freezes both incoming requests and processing; resuming cannot produce a wall-clock catch-up burst. Simulated processing takes 1.2–3.6 logical seconds. Least-connections ties choose the first matching server.
+Bundle attribution found React/ReactDOM, GSAP and React Router as expected initial dependencies; no unexpected new heavy dependency was added. The 3D ecosystem is confined to its lazy chunk. DPR stays 1–1.5, rendering pauses offscreen/in hidden tabs, and useFrame uses ref mutations. The existing 500kB 3D warning remains visible; no FPS guarantee is made.
 
-CSS animates a maximum of eight SVG packet elements without React frame updates. Reduced motion omits packets while counters and destination highlighting continue. Mobile hides the desktop wires and uses a compact server grid. Controls are native, labelled and touch-sized. Only the coarse run status is a live region; individual requests are not announced. The observer, visibility listener and interval are cleaned up, including under StrictMode.
+Only Latin Manrope variable (200–800) and regular IBM Plex Mono WOFF2 files are emitted; both use font-display swap. The unused legacy 13.14kB WOFF artifact is gone (modern browsers previously selected WOFF2 anyway). Actual transfer, CLS, Lighthouse and GPU timing have not been measured.
 
-### Phase-three files
+## Deployment
 
-- `src/data/experience.ts` (updated) and `src/data/experiments.ts`
-- `src/sections/Experience/`: `Experience.tsx`, `ExperienceEntry.tsx`, `Experience.module.css`, `useExperienceTimeline.ts`
-- `src/sections/Playground/`: `Playground.tsx`, `ExperimentIndex.tsx`, `Playground.module.css`
-- `src/sections/Playground/LoadBalancer/`: `LoadBalancerDemo.tsx`, `LoadBalancerControls.tsx`, `LoadBalancerDiagram.tsx`, `ServerNode.tsx`
-- `src/sections/Playground/LoadBalancer/simulation/`: `types.ts`, `algorithms.ts`, `engine.ts`, `useLoadBalancerSimulation.ts`
-- `tests/experience.test.tsx`, `tests/load-balancer.test.tsx`
+**Do not deploy yet.** No host has been selected. No provider configuration file has been activated and no production URL is invented. For any static host: install with `npm ci`, build with `npm run build`, publish `dist/`. No secrets are needed. `.env*` is ignored; no env file was present during the audit. If future configuration needs variables, add safe placeholders to `.env.example`; VITE-prefixed values are public client data, never secrets.
 
-### Phase-three validation
+Choose exactly the configuration for the eventual host:
 
-`npm test`: **32 passing tests**, retaining all 16 existing tests. The 16 new tests cover typed experience rendering, explicit placeholders, real ScrollTrigger cleanup, reduced-motion content, three routing algorithms, job accounting, bounded history, topology reset, pause/reset behavior, timer/observer cleanup, offscreen/background suspension and resumption, reduced-motion counters, and labelled/focusable native controls.
+### Vercel
 
-`npm run build`: passes TypeScript and production bundling. No dependencies were added. Main JS is approximately **134.7 kB gzip** (up about 4.2 kB); CSS is approximately **8.4 kB gzip**. The pre-existing lazy Three.js chunk remains approximately **249.3 kB gzip**, with the existing size warning retained. Neither new section imports Three.js.
+Use the Vite preset and output `dist`. Once selected, add root `vercel.json`:
 
-These checks use DOM emulation, not browser rendering. Static review confirms content-driven section heights, no timeline spacers or pins, mobile-specific topology, bounded logs/packets and no animation-frame React loop. Browser verification was attempted but denied because the browser tool could not verify its required admin policy. Visual desktop/mobile checks and FPS measurements are not claimed.
+```json
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
+```
 
-## Next phase — intentionally not built
+[Vercel's Vite SPA guidance](https://vercel.com/docs/frameworks/frontend/vite#using-vite-to-make-spas) documents the deep-link rewrite.
 
-Replace experience placeholders only with verified history. Replace the five Lab concept placeholders with real experiments in a later phase. About and Contact remain TODOs, with inactive navigation. Add only real biography, contact and repository information when supplied; no generic contact form.
+### Netlify
 
-## References
+Set build `npm run build` and publish directory `dist`. Once selected, add `public/_redirects` (Vite copies it into dist):
 
-- [Lenis GSAP integration](https://github.com/darkroomengineering/lenis#gsap-scrolltrigger)
-- [GSAP responsive contexts and cleanup](https://gsap.com/docs/v3/GSAP/gsap.matchMedia/)
+```text
+/* /index.html 200
+```
 
-## Phase four — structurally complete portfolio
+Use the non-forced rewrite so existing assets retain normal handling. See [Netlify SPA rewrites](https://docs.netlify.com/manage/routing/redirects/rewrites-proxies/).
 
-About and Contact now follow Lab as sections 07 and 08. About preserves the editorial grid and has an optional, omitted portrait; supporting personal copy is visibly marked for verification. Contact has three disabled, noninteractive rows until real email/GitHub/LinkedIn data is provided. The footer includes the technology stack and a keyboard-accessible back-to-top link.
+### Cloudflare Pages
 
-### Routing and navigation
+Set build `npm run build` and output `dist`. Keep the build without a top-level `404.html`: Pages' default SPA behavior routes unmatched navigations to the application root. See [Cloudflare Pages serving behavior](https://developers.cloudflare.com/pages/configuration/serving-pages/). This applies to Pages, not Workers deployment configuration.
 
-Added `react-router-dom` (7.18.4) for `/` and `/work/:slug`, with safe not-found views for unknown slugs and paths. Project rows are now native route links; the old dialog module/data model remain available, but dialogs are no longer mounted by the project index. All four existing projects are explicitly labelled concepts. Case studies omit unverified concept years, distinguish proposed roles/architecture, identify illustrative media and render only supplied content. Screenshot galleries use lazy images; no screenshots are preloaded. Previous/next navigation stops at the ends.
+## SPA routing and SEO
 
-Back to Work returns to `/#work` rather than attempting brittle exact-pixel restoration. INDEX, WORK, ABOUT and CONTACT links work from either route. The active navigation state follows scroll position using the existing ScrollTrigger lifecycle. Path changes remount the smooth-scroll owner so Lenis, section triggers, simulation timers and visibility observers can clean up normally. Destination headings receive focus and a visible outline; fragment navigation focuses its destination without another focus-induced scroll.
+`/work/:slug` uses stable project slugs. Unknown slugs/paths show a safe client-side not-found view; static SPA fallbacks commonly return HTTP 200, not a server 404. Explicit Back to Work returns to `/#work`; browser history remains available. Check hard reload/direct links and missing assets on the chosen host before release.
 
-Titles, descriptions and Open Graph text update per route; the static HTML has default metadata and theme color. Domain, canonical URL and social-preview asset are intentionally unset until deployment information exists. SPA metadata updates are client-side: social crawlers that do not execute JavaScript see the default metadata; prerendering can be evaluated at deployment.
+Home HTML has title, description, Open Graph text and theme color. Routes update unique titles/descriptions, including concept labels. Canonical, og:url, og:image and sitemap remain unset until a real origin and approved social image exist. Crawlers that do not execute JavaScript see the default HTML metadata; evaluate prerendering if per-project social previews are needed. No inaccurate structured data was added.
 
-**Hosting requirement:** configure SPA fallback/rewrite to `/index.html` for non-asset paths (including `/work/*`). Vite development handles these routes, but the eventual static host needs its own fallback configuration. No provider or deployment URL has been invented.
+## Known content TODOs
 
-### New files
+- Verify/replace the four project concepts with actual scope, status, factual results and authentic links.
+- Supply exact education programme title/dates only if desired; no invented jobs or clients.
+- Add real, compressed project media with dimensions, alt and captions.
+- Optional genuine portrait, if desired.
+- Select host/domain and social preview asset; activate its SPA fallback only then.
+- Complete browser QA at 320, 375, 390, 430, 768, 1024 and 1440px; keyboard/reduced-motion checks; Safari/mobile-device checks; Lighthouse and final performance QA.
 
-- `src/data/about.ts`, `src/data/contact.ts`
-- `src/sections/About/About.tsx`, `About.module.css`
-- `src/sections/Contact/Contact.tsx`, `Contact.module.css`
-- `src/components/layout/Footer.tsx`, `RouteEffects.tsx`
-- `src/pages/CaseStudy.tsx`, `CaseStudy.module.css`
-- `tests/phase-four.test.tsx`
-
-Updated App, entry point, project links, navigation, global footer styles, HTML metadata and documentation. Existing section composition and Three.js behavior are preserved. The optional global progress bar was omitted to keep the existing navigation restrained.
-
-### Validation and budget
-
-**48 tests pass**, retaining all previous 32 and adding 16: portrait-free About, explicit personal placeholders, disabled/enabled contacts, valid/invalid slugs, concept disclosure, conditional sections, About/Contact destinations, back-to-top focusability, single H1, heading hierarchy, destination focus/title, route cleanup and lazy screenshot loading. These are DOM-emulation tests; native keyboard-control semantics are tested, not browser-generated keyboard events.
-
-`npm run build` passes. Main JS: **149.15 kB gzip**, up **14.49 kB** from phase three. CSS: **9.47 kB gzip**, up **1.08 kB**. The lazy Three.js chunk is **249.34 kB gzip** with the existing size warning retained. React Router is the only new direct dependency; no new animation or visualization library was added. Case-study media is data-driven, with below-fold screenshots loaded lazily.
-
-Browser visual verification was attempted but blocked because the browser tool could not verify its admin-enforced security policy. No workaround was used. Desktop/mobile overflow, actual navigation motion, touch behavior and FPS still need real-browser QA. Source review checks responsive grids, wrapping, readable prose width, native controls, reduced-motion overrides and explicit lifecycle cleanup.
-
-### Remaining work
-
-- Verify and replace About copy and Experience placeholders.
-- Supply real project narratives, dates, outcomes and screenshots/videos.
-- Supply verified contact and project destination URLs.
-- Configure deployment URL, social image and host SPA fallback.
-- Complete desktop/mobile visual QA and device performance profiling.
-
-Earlier phase-two/three TODO notes above describe those milestones; About and Contact are now implemented, with their data intentionally incomplete.
+Use `CONTENT_AUDIT.md` for content decisions and `PRODUCTION_CHECKLIST.md` as the release gate.

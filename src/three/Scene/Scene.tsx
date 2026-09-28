@@ -1,10 +1,25 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { MathUtils } from "three";
 import { ArchitectureModel } from "../ArchitectureModel/ArchitectureModel";
 import { StaticArchitecture } from "./StaticArchitecture";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import type { SceneMotion } from "./types";
+function ContextLossHandler({ onLost }: { onLost: () => void }) {
+  const gl = useThree((state) => state.gl);
+  useEffect(() => {
+    const canvas = gl.domElement;
+    canvas.addEventListener("webglcontextlost", onLost, { once: true });
+    return () => canvas.removeEventListener("webglcontextlost", onLost);
+  }, [gl, onLost]);
+  return null;
+}
 function CameraRig({
   motion,
   reduced,
@@ -41,16 +56,10 @@ function CameraRig({
   return null;
 }
 export default function Scene({ motion }: { motion: RefObject<SceneMotion> }) {
-  const contextCleanup = useRef<(() => void) | null>(null);
-  useEffect(
-    () => () => {
-      contextCleanup.current?.();
-    },
-    [],
-  );
   const root = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
   const [lost, setLost] = useState(false);
+  const onLost = useCallback(() => setLost(true), []);
   const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
   const mobile = useMediaQuery("(max-width: 899px)");
   useEffect(() => {
@@ -85,16 +94,8 @@ export default function Scene({ motion }: { motion: RefObject<SceneMotion> }) {
         }}
         gl={{ antialias: true, alpha: true, powerPreference: "low-power" }}
         fallback={<StaticArchitecture />}
-        onCreated={({ gl }) => {
-          contextCleanup.current?.();
-          const onLost = () => setLost(true);
-          gl.domElement.addEventListener("webglcontextlost", onLost, {
-            once: true,
-          });
-          contextCleanup.current = () =>
-            gl.domElement.removeEventListener("webglcontextlost", onLost);
-        }}
       >
+        <ContextLossHandler onLost={onLost} />
         <ambientLight intensity={1.15} />
         <directionalLight
           position={[2, 6, 4]}

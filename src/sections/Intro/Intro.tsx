@@ -4,7 +4,7 @@ const steps = [
     number: "01",
     label: "THE INTERFACE",
     text: <>I build interfaces.</>,
-    detail: "The part you see. Fast, accessible, and considered.",
+    detail: "The part you see: interfaces and interaction.",
   },
   {
     number: "02",

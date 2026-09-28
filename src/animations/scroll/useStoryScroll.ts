@@ -61,7 +61,7 @@ export function useStoryScroll(
         steps.forEach((step) =>
           gsap.fromTo(
             step,
-            { opacity: 0.48, y: 18 },
+            { opacity: 0.9, y: 18 },
             {
               opacity: 1,
               y: 0,

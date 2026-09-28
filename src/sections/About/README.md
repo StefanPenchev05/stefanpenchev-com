@@ -1,3 +1,3 @@
 # About
 
-Editorial section 07. The statement is supplied by the phase-four brief; all supporting personal copy in `src/data/about.ts` is explicitly marked as editable and awaiting verification. No location, availability or portrait is invented. The optional portrait field renders only when supplied.
+Section 07 uses the owner's verified interests and requested statement from `src/data/about.ts`. No personal story or employment is invented. An optional genuine portrait can be added with alt text and dimensions; none is required by the layout.

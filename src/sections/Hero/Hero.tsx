@@ -10,9 +10,9 @@ export function Hero() {
       </div>
       <div className={styles.identity}>{profile.name.toUpperCase()}</div>
       <h1 id="hero-title">
-        Full-stack
+        {profile.headline.split(" ")[0]}
         <br />
-        <span>developer.</span>
+        <span>{profile.headline.split(" ").slice(1).join(" ")}.</span>
       </h1>
       <p className={styles.disciplines}>
         Backend <i /> Systems <i /> Web

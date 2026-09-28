@@ -12,7 +12,7 @@ export const about = {
     {
       number: "02",
       title: "WHAT I BUILD",
-      text: "I’m interested in full-stack web development and backend systems, working with Go, TypeScript, JavaScript, React, Node.js, Python and C++.",
+      text: "I’m interested in full-stack web development and backend systems. Languages and tools I’m interested in include Go, TypeScript, JavaScript, React, Node.js, Python and C++.",
       placeholder: false,
     },
     {

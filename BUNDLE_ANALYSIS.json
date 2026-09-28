@@ -1,0 +1,87 @@
+{
+  "notes": "Vite generateBundle snapshot. moduleRenderedBytes are pre-minification attribution, not transfer bytes or per-package gzip. Plugin gzip uses Node zlib and may differ from Vite reporter. Runtime chunk sizes are recorded in README.",
+  "before": [
+    {
+      "file": "assets/index-CbXUdd_g.js",
+      "entry": true,
+      "imports": [],
+      "dynamicImports": [
+        "assets/Scene-DVfhWoEW.js"
+      ],
+      "bytes": 448055,
+      "gzipBytes": 147400,
+      "moduleRenderedBytes": {
+        "Application": 108094,
+        "React / renderers": 563265,
+        "Other dependencies": 28062,
+        "React Router": 91668,
+        "GSAP": 252059
+      }
+    },
+    {
+      "file": "assets/Scene-DVfhWoEW.js",
+      "entry": false,
+      "imports": [
+        "assets/index-CbXUdd_g.js"
+      ],
+      "dynamicImports": [],
+      "bytes": 936634,
+      "gzipBytes": 246411,
+      "moduleRenderedBytes": {
+        "Three.js": 1213772,
+        "Other dependencies": 17271,
+        "3D ecosystem": 290973,
+        "Application": 11654
+      }
+    }
+  ],
+  "after": [
+    {
+      "file": "assets/index-CkZakrBa.js",
+      "entry": true,
+      "imports": [],
+      "dynamicImports": [
+        "assets/Scene-CFw6BYl5.js",
+        "assets/CaseStudy-BdP6hpjs.js"
+      ],
+      "bytes": 444763,
+      "gzipBytes": 146726,
+      "moduleRenderedBytes": {
+        "Application": 102067,
+        "React / renderers": 563265,
+        "Other dependencies": 28062,
+        "React Router": 91668,
+        "GSAP": 252059
+      }
+    },
+    {
+      "file": "assets/CaseStudy-BdP6hpjs.js",
+      "entry": false,
+      "imports": [
+        "assets/index-CkZakrBa.js"
+      ],
+      "dynamicImports": [],
+      "bytes": 5631,
+      "gzipBytes": 2130,
+      "moduleRenderedBytes": {
+        "Application": 11040
+      }
+    },
+    {
+      "file": "assets/Scene-CFw6BYl5.js",
+      "entry": false,
+      "imports": [
+        "assets/index-CkZakrBa.js"
+      ],
+      "dynamicImports": [],
+      "bytes": 936608,
+      "gzipBytes": 246371,
+      "moduleRenderedBytes": {
+        "Three.js": 1213772,
+        "Other dependencies": 17271,
+        "3D ecosystem": 290973,
+        "Application": 11645
+      }
+    }
+  ]
+}

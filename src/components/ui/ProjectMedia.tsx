@@ -28,7 +28,7 @@ export function ProjectMedia({
     if (!element) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry.isIntersecting) element.pause();
+        if (!entry.isIntersecting || entry.intersectionRatio < 0.1) element.pause();
       },
       { threshold: 0.1 },
     );
