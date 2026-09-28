@@ -46,15 +46,15 @@ src/
 │   ├── Projects/          # editorial rows and native dialog
 │   ├── Architecture/     # HTML/SVG schematic, node details, responsive CSS
 │   ├── Skills/           # data-driven engineering index
-│   ├── Experience/       # next-phase TODO
-│   ├── Playground/       # next-phase TODO
+│   ├── Experience/       # editorial timeline with verified-data placeholders
+│   ├── Playground/       # Lab notebook and load-balancer simulation
 │   ├── About/            # next-phase TODO
 │   └── Contact/          # next-phase TODO
 ├── three/
 │   ├── Scene/            # lazy canvas, camera and static SVG fallback
 │   ├── ArchitectureModel/# low-poly nodes and mutable connection buffer
 │   └── effects/          # intentionally no postprocessing
-├── data/                 # projects, architecture, skills; future experience
+├── data/                 # projects, architecture, skills, experience and experiments
 ├── hooks/                # responsive media subscription
 ├── store/                # discrete modal selection only
 └── styles/               # tokens, global rules and local fonts
@@ -91,7 +91,7 @@ Skills use `src/data/skills.ts`, with the exact six groups requested. Hover/focu
 
 ## Validation
 
-`npm test`: **16 passing tests**, including the original five. Added checks cover server-rendered architecture content, native keyboard buttons and contextual details, immediate dependencies, reduced-motion packet suppression (including both storage branches), StrictMode cleanup, desktop/mobile/motion breakpoint changes, mobile inline details without pinning, route continuity and round-trip order, typed skills rendering and expansion, and hero narrative emphasis.
+Phase-two validation: **16 passing tests**, including the original five. Checks cover server-rendered architecture content, native keyboard buttons and contextual details, immediate dependencies, reduced-motion packet suppression (including both storage branches), StrictMode cleanup, desktop/mobile/motion breakpoint changes, mobile inline details without pinning, route continuity and round-trip order, typed skills rendering and expansion, and hero narrative emphasis.
 
 `npm run build`: passes TypeScript and production bundling. No dependencies were added in phase two. The main JavaScript bundle increased from approximately 125.8 kB to 130.4 kB gzip; the new sections add no Three.js import. The existing lazy scene remains approximately 249 kB gzip, and its size warning is retained.
 
@@ -99,9 +99,38 @@ These are code and real-GSAP tests in DOM emulation. They do not measure browser
 
 Visual browser verification remains blocked: the computer-use browser could not verify its required admin policy, including on retry. Desktop/mobile screenshots, actual perceived sculpture size and frame timings remain to be checked when that browser path is available. No alternate browser path was used to bypass it; no FPS claim is made.
 
+## Phase three — Experience and Lab
+
+Experience (`#experience`, section 05) is an editorial timeline driven by `src/data/experience.ts`. All three entries explicitly identify themselves as development placeholders; there are no invented dates, employers or achievements. Native details controls disclose entry notes. One ScrollTrigger fills the line and marks the current entry without React scroll updates, pinning or spacer elements. Reduced motion removes this trigger. Disclosure toggles refresh layout measurements, and the context and toggle listener are removed on unmount.
+
+Lab (`#lab`, section 06) contains one working load-balancer prototype and five explicitly unimplemented concept entries, sourced from `src/data/experiments.ts`. Native selects choose round robin, random or least connections; 2–5 servers; and low/medium/high request rates. Changing topology resets and pauses the simulation. About and Contact remain inactive.
+
+### Simulation architecture
+
+`LoadBalancer/simulation/algorithms.ts` holds pure routing functions. `engine.ts` owns logical time, jobs, completion accounting and a capped eight-event log. `useLoadBalancerSimulation.ts` keeps mutable engine state in a ref and publishes snapshots only when assignments or completions change. A single 100 ms interval runs only while started, visible and in an active document. Pausing freezes both incoming requests and processing; resuming cannot produce a wall-clock catch-up burst. Simulated processing takes 1.2–3.6 logical seconds. Least-connections ties choose the first matching server.
+
+CSS animates a maximum of eight SVG packet elements without React frame updates. Reduced motion omits packets while counters and destination highlighting continue. Mobile hides the desktop wires and uses a compact server grid. Controls are native, labelled and touch-sized. Only the coarse run status is a live region; individual requests are not announced. The observer, visibility listener and interval are cleaned up, including under StrictMode.
+
+### Phase-three files
+
+- `src/data/experience.ts` (updated) and `src/data/experiments.ts`
+- `src/sections/Experience/`: `Experience.tsx`, `ExperienceEntry.tsx`, `Experience.module.css`, `useExperienceTimeline.ts`
+- `src/sections/Playground/`: `Playground.tsx`, `ExperimentIndex.tsx`, `Playground.module.css`
+- `src/sections/Playground/LoadBalancer/`: `LoadBalancerDemo.tsx`, `LoadBalancerControls.tsx`, `LoadBalancerDiagram.tsx`, `ServerNode.tsx`
+- `src/sections/Playground/LoadBalancer/simulation/`: `types.ts`, `algorithms.ts`, `engine.ts`, `useLoadBalancerSimulation.ts`
+- `tests/experience.test.tsx`, `tests/load-balancer.test.tsx`
+
+### Phase-three validation
+
+`npm test`: **32 passing tests**, retaining all 16 existing tests. The 16 new tests cover typed experience rendering, explicit placeholders, real ScrollTrigger cleanup, reduced-motion content, three routing algorithms, job accounting, bounded history, topology reset, pause/reset behavior, timer/observer cleanup, offscreen/background suspension and resumption, reduced-motion counters, and labelled/focusable native controls.
+
+`npm run build`: passes TypeScript and production bundling. No dependencies were added. Main JS is approximately **134.7 kB gzip** (up about 4.2 kB); CSS is approximately **8.4 kB gzip**. The pre-existing lazy Three.js chunk remains approximately **249.3 kB gzip**, with the existing size warning retained. Neither new section imports Three.js.
+
+These checks use DOM emulation, not browser rendering. Static review confirms content-driven section heights, no timeline spacers or pins, mobile-specific topology, bounded logs/packets and no animation-frame React loop. Browser verification was attempted but denied because the browser tool could not verify its required admin policy. Visual desktop/mobile checks and FPS measurements are not claimed.
+
 ## Next phase — intentionally not built
 
-Experience, Playground, About and Contact remain scoped TODOs. Do not activate their navigation items until their destination sections exist. Add only verified experience and real contact links. Do not add a generic contact form.
+Replace experience placeholders only with verified history. Replace the five Lab concept placeholders with real experiments in a later phase. About and Contact remain TODOs, with inactive navigation. Add only real biography, contact and repository information when supplied; no generic contact form.
 
 ## References
 

@@ -4,6 +4,8 @@ import { Story } from "./components/layout/Story";
 import { Projects } from "./sections/Projects/Projects";
 import { Architecture } from "./sections/Architecture/Architecture";
 import { Skills } from "./sections/Skills/Skills";
+import { Experience } from "./sections/Experience/Experience";
+import { Playground } from "./sections/Playground/Playground";
 export function App() {
   return (
     <SmoothScroll>
@@ -16,7 +18,9 @@ export function App() {
         <Projects />
         <Architecture />
         <Skills />
-        {/* TODO next phase: Experience → Playground → About → Contact. Navigation stays inactive. */}
+        <Experience />
+        <Playground />
+        {/* TODO: About and Contact. Navigation stays inactive. */}
       </main>
       <footer className="page-width site-footer">
         <span>STEFAN PENCHEV</span>

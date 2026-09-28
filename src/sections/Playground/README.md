@@ -1,5 +1,3 @@
-# TODO — Playground
+# Lab
 
-Next phase, intentionally not implemented in the initial build.
-
-Add actual experiments with clear status and accessible previews. Keep stronger visual interactions here.
+One client-side load-balancer prototype plus five unimplemented concept entries from `src/data/experiments.ts`. Pure routing functions and a mutable logical-time engine are separate from controls and presentation. A single 100 ms interval runs only while started, intersecting the viewport and in a visible document. React snapshots publish only when assignments/completions change; CSS owns packet motion. History and packet DOM are capped at eight. Reduced motion keeps counters and destination highlighting with no traveling packets. Changing server count resets and pauses the run. See root README for validation and remaining TODOs.

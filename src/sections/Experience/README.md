@@ -1,5 +1,3 @@
-# TODO — Experience
+# Experience
 
-Next phase, intentionally not implemented in the initial build.
-
-Add verified experience data and an editorial timeline. Never invent roles, dates or organizations.
+Content-driven editorial timeline with one owned ScrollTrigger and native details disclosures. Reduced motion skips the trigger. Data lives in `src/data/experience.ts`; all current entries are explicitly unverified development placeholders. Replace them only with verified history. No pinning, empty scroll spacers or per-scroll React updates.
