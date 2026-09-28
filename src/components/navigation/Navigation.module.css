@@ -88,3 +88,44 @@
     transition: none;
   }
 }
+.header nav a[aria-current]:after {
+  transform: scaleX(1);
+}
+.header nav a {
+  min-height: 44px;
+  align-items: center;
+}
+.header nav a:after {
+  bottom: 5px;
+}
+@media (max-width: 550px) {
+  .header {
+    padding-inline: var(--gutter);
+    gap: 12px;
+  }
+  .name {
+    font-size: 9px;
+    max-width: 80px;
+    line-height: 1.5;
+  }
+  .dot {
+    display: none;
+  }
+  .header nav {
+    gap: 12px;
+    font-size: 10px;
+  }
+  .header nav a span {
+    display: none;
+  }
+}
+@media (max-width: 360px) {
+  .header nav {
+    gap: 9px;
+    font-size: 9px;
+  }
+  .name {
+    font-size: 8px;
+    max-width: 60px;
+  }
+}

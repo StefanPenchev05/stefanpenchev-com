@@ -1,5 +1,3 @@
-# TODO — About
+# About
 
-Next phase, intentionally not implemented in the initial build.
-
-Add the statement about understanding beneath abstractions, a personal paragraph and optional portrait placeholder. Then activate the navigation anchor.
+Editorial section 07. The statement is supplied by the phase-four brief; all supporting personal copy in `src/data/about.ts` is explicitly marked as editable and awaiting verification. No location, availability or portrait is invented. The optional portrait field renders only when supplied.

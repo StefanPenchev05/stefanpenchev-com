@@ -1,5 +1,3 @@
-# TODO — Contact
+# Contact
 
-Next phase, intentionally not implemented in the initial build.
-
-Add verified email, GitHub and LinkedIn links. Restrained magnetic main button with keyboard and reduced-motion guards; no form. Then activate the navigation anchor.
+Section 08 uses direct contact rows, not a form. Set verified `value`, `href` and `enabled: true` in `src/data/contact.ts` to activate a method. Missing or disabled destinations render noninteractive elements. No dummy URLs are published.

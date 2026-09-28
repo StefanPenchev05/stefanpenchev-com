@@ -136,3 +136,46 @@ Replace experience placeholders only with verified history. Replace the five Lab
 
 - [Lenis GSAP integration](https://github.com/darkroomengineering/lenis#gsap-scrolltrigger)
 - [GSAP responsive contexts and cleanup](https://gsap.com/docs/v3/GSAP/gsap.matchMedia/)
+
+## Phase four — structurally complete portfolio
+
+About and Contact now follow Lab as sections 07 and 08. About preserves the editorial grid and has an optional, omitted portrait; supporting personal copy is visibly marked for verification. Contact has three disabled, noninteractive rows until real email/GitHub/LinkedIn data is provided. The footer includes the technology stack and a keyboard-accessible back-to-top link.
+
+### Routing and navigation
+
+Added `react-router-dom` (7.18.4) for `/` and `/work/:slug`, with safe not-found views for unknown slugs and paths. Project rows are now native route links; the old dialog module/data model remain available, but dialogs are no longer mounted by the project index. All four existing projects are explicitly labelled concepts. Case studies omit unverified concept years, distinguish proposed roles/architecture, identify illustrative media and render only supplied content. Screenshot galleries use lazy images; no screenshots are preloaded. Previous/next navigation stops at the ends.
+
+Back to Work returns to `/#work` rather than attempting brittle exact-pixel restoration. INDEX, WORK, ABOUT and CONTACT links work from either route. The active navigation state follows scroll position using the existing ScrollTrigger lifecycle. Path changes remount the smooth-scroll owner so Lenis, section triggers, simulation timers and visibility observers can clean up normally. Destination headings receive focus and a visible outline; fragment navigation focuses its destination without another focus-induced scroll.
+
+Titles, descriptions and Open Graph text update per route; the static HTML has default metadata and theme color. Domain, canonical URL and social-preview asset are intentionally unset until deployment information exists. SPA metadata updates are client-side: social crawlers that do not execute JavaScript see the default metadata; prerendering can be evaluated at deployment.
+
+**Hosting requirement:** configure SPA fallback/rewrite to `/index.html` for non-asset paths (including `/work/*`). Vite development handles these routes, but the eventual static host needs its own fallback configuration. No provider or deployment URL has been invented.
+
+### New files
+
+- `src/data/about.ts`, `src/data/contact.ts`
+- `src/sections/About/About.tsx`, `About.module.css`
+- `src/sections/Contact/Contact.tsx`, `Contact.module.css`
+- `src/components/layout/Footer.tsx`, `RouteEffects.tsx`
+- `src/pages/CaseStudy.tsx`, `CaseStudy.module.css`
+- `tests/phase-four.test.tsx`
+
+Updated App, entry point, project links, navigation, global footer styles, HTML metadata and documentation. Existing section composition and Three.js behavior are preserved. The optional global progress bar was omitted to keep the existing navigation restrained.
+
+### Validation and budget
+
+**48 tests pass**, retaining all previous 32 and adding 16: portrait-free About, explicit personal placeholders, disabled/enabled contacts, valid/invalid slugs, concept disclosure, conditional sections, About/Contact destinations, back-to-top focusability, single H1, heading hierarchy, destination focus/title, route cleanup and lazy screenshot loading. These are DOM-emulation tests; native keyboard-control semantics are tested, not browser-generated keyboard events.
+
+`npm run build` passes. Main JS: **149.15 kB gzip**, up **14.49 kB** from phase three. CSS: **9.47 kB gzip**, up **1.08 kB**. The lazy Three.js chunk is **249.34 kB gzip** with the existing size warning retained. React Router is the only new direct dependency; no new animation or visualization library was added. Case-study media is data-driven, with below-fold screenshots loaded lazily.
+
+Browser visual verification was attempted but blocked because the browser tool could not verify its admin-enforced security policy. No workaround was used. Desktop/mobile overflow, actual navigation motion, touch behavior and FPS still need real-browser QA. Source review checks responsive grids, wrapping, readable prose width, native controls, reduced-motion overrides and explicit lifecycle cleanup.
+
+### Remaining work
+
+- Verify and replace About copy and Experience placeholders.
+- Supply real project narratives, dates, outcomes and screenshots/videos.
+- Supply verified contact and project destination URLs.
+- Configure deployment URL, social image and host SPA fallback.
+- Complete desktop/mobile visual QA and device performance profiling.
+
+Earlier phase-two/three TODO notes above describe those milestones; About and Contact are now implemented, with their data intentionally incomplete.

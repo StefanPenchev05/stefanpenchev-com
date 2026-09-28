@@ -413,3 +413,7 @@
     font-size: 12px;
   }
 }
+
+.row {
+  text-decoration: none;
+}

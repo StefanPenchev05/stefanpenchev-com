@@ -1,0 +1,190 @@
+.page {
+  padding-top: 155px;
+  padding-bottom: 80px;
+  animation: arrive 0.25s ease-out;
+}
+.back {
+  font: 11px var(--mono);
+  color: var(--muted);
+  display: inline-block;
+  padding: 12px 0;
+  margin-bottom: 45px;
+}
+.hero h1,
+.page > h1 {
+  font-size: clamp(44px, 7vw, 100px);
+  font-weight: 450;
+  letter-spacing: -0.06em;
+  line-height: 1.05;
+  margin: 24px 0;
+}
+.hero h1:focus,
+.page > h1:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 10px;
+}
+.description {
+  font-size: clamp(18px, 2vw, 26px);
+  line-height: 1.6;
+  color: var(--soft);
+  max-width: 65ch;
+}
+.notice {
+  font: 11px/1.9 var(--mono);
+  max-width: 75ch;
+  color: var(--muted);
+  margin: 25px 0;
+}
+.metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px 65px;
+  margin: 45px 0;
+}
+.metadata dt {
+  font: 10px/1.8 var(--mono);
+  color: var(--muted);
+}
+.metadata dd {
+  font-size: 13px;
+  margin: 10px 0 0;
+}
+.preview {
+  margin: 0 0 70px;
+}
+.preview img,
+.media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.preview img {
+  max-height: 650px;
+  object-fit: contain;
+  background: #101214;
+}
+.page figcaption {
+  font: 10px/1.8 var(--mono);
+  color: var(--muted);
+  margin-top: 14px;
+}
+.prose {
+  max-width: 68ch;
+  margin: 0 auto;
+}
+.prose section {
+  margin: 0 0 50px;
+}
+.page h2 {
+  font-size: 25px;
+  line-height: 1.3;
+  font-weight: 450;
+  letter-spacing: -0.03em;
+}
+.prose p,
+.prose li,
+.architecture p {
+  font-size: 16px;
+  line-height: 1.9;
+  color: var(--soft);
+}
+.prose li + li {
+  margin-top: 12px;
+}
+.architecture {
+  border-block: 1px solid var(--line);
+  padding: 30px 0;
+  margin: 55px 0;
+}
+.architecture ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px 35px;
+  padding: 0;
+  list-style: none;
+  margin: 30px 0;
+}
+.architecture li {
+  border-bottom: 1px solid var(--accent);
+  padding: 14px 0;
+  font: 12px var(--mono);
+}
+.architecture p {
+  max-width: 68ch;
+}
+.media {
+  margin: 55px 0;
+}
+.media figure {
+  margin: 30px 0;
+}
+.links {
+  display: flex;
+  gap: 30px;
+  font: 12px var(--mono);
+  margin: 40px 0;
+}
+.pagination {
+  border-top: 1px solid var(--line);
+  padding-top: 30px;
+  margin-top: 70px;
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+}
+.pagination a {
+  font: 10px/1.8 var(--mono);
+  color: var(--accent);
+}
+.pagination span {
+  display: block;
+  font:
+    20px/1.5 "Manrope Variable",
+    sans-serif;
+  color: var(--text);
+  margin-top: 12px;
+}
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (max-width: 899px) {
+  .page {
+    padding-top: 120px;
+    padding-bottom: 55px;
+  }
+  .back {
+    margin-bottom: 25px;
+  }
+  .hero h1 {
+    font-size: clamp(40px, 10vw, 72px);
+    overflow-wrap: anywhere;
+  }
+  .metadata {
+    gap: 25px;
+    margin: 30px 0;
+  }
+  .preview {
+    margin-bottom: 45px;
+  }
+  .prose p,
+  .prose li,
+  .architecture p {
+    font-size: 14px;
+  }
+  .pagination span {
+    font-size: 16px;
+  }
+  .pagination {
+    gap: 24px;
+  }
+  .notice {
+    font-size: 11px;
+  }
+}

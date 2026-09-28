@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { projects } from "../../data/projects";
 import { Arrow } from "../../components/ui/Arrow";
-import { usePortfolioStore } from "../../store/usePortfolioStore";
+import { Link } from "react-router-dom";
 import { useProjectPreview } from "../../animations/transitions/useProjectPreview";
-import { ProjectDialog } from "./ProjectDialog";
+
 import styles from "./Projects.module.css";
 export function Projects() {
   const [hovered, setHovered] = useState<string | null>(null);
-  const open = usePortfolioStore((state) => state.openProject);
+
   const preview = useProjectPreview();
   const active = projects.find((project) => project.slug === hovered);
   return (
@@ -53,11 +53,11 @@ export function Projects() {
             className={styles.project}
             data-active={hovered === project.slug}
           >
-            <button
+            <Link
+              to={`/work/${project.slug}`}
               className={styles.row}
               onClick={() => {
                 setHovered(null);
-                open(project.slug);
               }}
               onPointerEnter={(event) => {
                 if (event.pointerType === "mouse") {
@@ -108,7 +108,7 @@ export function Projects() {
                   VIEW CASE STUDY <Arrow />
                 </span>
               </span>
-            </button>
+            </Link>
           </article>
         ))}
       </div>
@@ -135,7 +135,6 @@ export function Projects() {
           </>
         )}
       </div>
-      <ProjectDialog />
     </section>
   );
 }
