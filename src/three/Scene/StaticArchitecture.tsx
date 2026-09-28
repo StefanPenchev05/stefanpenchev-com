@@ -1,36 +1,40 @@
+const nodes = [
+  { name: "CLIENT", x: 130, y: 70 },
+  { name: "API", x: 270, y: 155 },
+  { name: "SERVICE", x: 300, y: 245 },
+  { name: "DATABASE", x: 155, y: 365 },
+  { name: "CACHE", x: 430, y: 365 },
+];
 export function StaticArchitecture() {
   return (
     <svg
       viewBox="0 0 560 460"
       role="img"
-      aria-label="Client connects to API and service, then database and cache"
+      aria-label="Client connects to API, API to service, and service to database and cache"
       className="static-architecture"
     >
-      <g fill="none" stroke="#55534e" strokeWidth="1">
-        <path d="M130 130H280V225H420M280 225V345H160M280 345h140" />
-        <path d="m55 115 75-40 75 40-75 40Zm0 0v25l75 40 75-40v-25m-75 40v25M205 220l75-40 75 40-75 40Zm0 0v25l75 40 75-40v-25m-75 40v25M350 330l70-40 70 40-70 40Zm0 0v30l70 40 70-40v-30m-70 40v30M90 340l70-40 70 40-70 40Zm0 0v30l70 40 70-40v-30m-70 40v30" />
-        <path
-          d="M205 220l75-40 75 40-75 40Z"
-          fill="#caa47833"
-          stroke="#caa478"
-        />
-      </g>
-      <g fontFamily="monospace" fontSize="10" fill="#b5b2aa">
-        <text x="105" y="60">
-          CLIENT
-        </text>
-        <text x="270" y="165" fill="#caa478">
-          API
-        </text>
-        <text x="396" y="210">
-          SERVICE
-        </text>
-        <text x="133" y="430">
-          DATABASE
-        </text>
-        <text x="404" y="430">
-          CACHE
-        </text>
+      <g fill="none" stroke="#79796e" strokeWidth="1">
+        <path d="M130 105V116H270V129M270 190V205H300V219M300 280V311H155V339M300 311H430V339" />
+        {nodes.map((node) => (
+          <g key={node.name} transform={`translate(${node.x} ${node.y})`}>
+            <path
+              d="M-50 0 0-26 50 0 0 26ZM-50 0v14L0 40l50-26V0M0 26v14"
+              fill={node.name === "API" ? "#30291f" : "#121410"}
+              stroke={node.name === "API" ? "#c7a77d" : "#79796e"}
+            />
+            <text
+              x="0"
+              y={node.name === "DATABASE" || node.name === "CACHE" ? 67 : -42}
+              textAnchor="middle"
+              fontFamily="monospace"
+              fontSize="12"
+              fill={node.name === "API" ? "#c7a77d" : "#c4c6bb"}
+              stroke="none"
+            >
+              {node.name}
+            </text>
+          </g>
+        ))}
       </g>
     </svg>
   );

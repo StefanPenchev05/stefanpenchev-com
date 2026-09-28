@@ -26,11 +26,7 @@ export function Hero() {
         <Arrow diagonal />
       </a>
       <div className={styles.metadata}>
-        <span>
-          BASED IN LUXEMBOURG
-          <br />
-          <span className="muted">BACKEND / SYSTEMS / WEB</span>
-        </span>
+        <span>BASED IN LUXEMBOURG</span>
         <span className={styles.status}>
           <i />
           AVAILABLE FOR

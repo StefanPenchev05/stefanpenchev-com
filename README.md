@@ -1,6 +1,6 @@
 # Stefan Penchev — portfolio foundation
 
-First implementation of the new brief: Swiss editorial typography, restrained architecture sculpture, scroll-driven introduction and an editorial project list. Built fresh with Vite, React, TypeScript, CSS Modules, React Three Fiber / Drei, GSAP ScrollTrigger, Lenis and Zustand.
+Phases one and two of the portfolio: Swiss editorial typography, restrained architecture sculpture, scroll-driven introduction and an editorial project list. Built fresh with Vite, React, TypeScript, CSS Modules, React Three Fiber / Drei, GSAP ScrollTrigger, Lenis and Zustand.
 
 ## Run
 
@@ -16,11 +16,13 @@ npm test          # lifecycle and content integrity checks
 
 - Self-hosted Manrope / IBM Plex Mono, warm off-white type, near-black background and one muted amber accent.
 - Fixed, compacting navigation. Index and Work are functional; About and Contact are explicitly inactive until their later sections exist.
-- Full-stack hero with Luxembourg / availability metadata.
+- Full-stack hero with Luxembourg / availability metadata, stronger body-copy contrast, larger readable sculpture labels and improved desktop framing. The headline is unchanged.
 - Lightweight five-node architecture sculpture: Client → API → Service → Database / Cache. Slow independent drift, constrained pointer camera response and scroll-driven separation / connections.
 - Four readable intro passages beside the sticky visual. This is content-backed CSS sticky pinning, synchronized by GSAP; no artificial pin spacers are inserted.
 - Four data-driven project concepts. Desktop has a bounded pointer-following preview; touch and smaller screens have inline illustrations. Click or keyboard activation opens a native modal case-study draft.
 - Extensible typed case-study data for overview, problem, solution, role, architecture, technologies, challenges, screenshots, result and real links.
+- Beyond the Interface: semantic HTML/SVG architecture, accessible node inspection, a scroll-driven cache-miss request/response path and a vertical mobile version.
+- Engineering Index: six typed responsibility groups, always-readable technology lists and category-level descriptions.
 
 The project entries and their original SVG previews are **illustrative placeholders**, not completed-project claims. Replace them in `src/data/projects.ts` before publishing a personal portfolio. The actual future case-study URL can be derived from each stable `slug`. No email address, repository, client, metric or employment history has been invented.
 
@@ -42,8 +44,8 @@ src/
 │   ├── Hero/
 │   ├── Intro/
 │   ├── Projects/          # editorial rows and native dialog
-│   ├── Architecture/     # next-phase TODO
-│   ├── Skills/           # next-phase TODO
+│   ├── Architecture/     # HTML/SVG schematic, node details, responsive CSS
+│   ├── Skills/           # data-driven engineering index
 │   ├── Experience/       # next-phase TODO
 │   ├── Playground/       # next-phase TODO
 │   ├── About/            # next-phase TODO
@@ -52,7 +54,7 @@ src/
 │   ├── Scene/            # lazy canvas, camera and static SVG fallback
 │   ├── ArchitectureModel/# low-poly nodes and mutable connection buffer
 │   └── effects/          # intentionally no postprocessing
-├── data/                 # projects; typed future skills / experience
+├── data/                 # projects, architecture, skills; future experience
 ├── hooks/                # responsive media subscription
 ├── store/                # discrete modal selection only
 └── styles/               # tokens, global rules and local fonts
@@ -60,7 +62,7 @@ public/
 ├── favicon.svg
 └── previews/             # original illustrative project images
 scripts/create-previews.py
- tests/                   # real GSAP lifecycle under DOM emulation
+tests/                    # real GSAP lifecycle and semantic tests under DOM emulation
 ```
 
 ## Scroll ownership and cleanup
@@ -77,23 +79,29 @@ The scene is lazy-loaded independently of the main UI. DPR is bounded at 1–1.5
 
 The Three.js scene still creates a large lazy chunk (approximately 249 kB gzip). Vite's size warning is retained rather than hidden. It is not part of the initial UI chunk. Hardware FPS needs a real browser/device profile; no 60 FPS guarantee is claimed.
 
+## Phase-two interaction and lifecycle
+
+The hero keeps its original layout and sticky composition. A modest camera reframing, 1.12 model scale, clearer node spacing and larger canvas labels target roughly 1.25–1.4 times the previous desktop presence. Passage positions drive Client → API → Service → Data emphasis; there is no added scroll space. The non-WebGL illustration now shows all five nodes and the same topology.
+
+`src/data/architecture.ts` is the diagram's source of truth. Seven native buttons inspect the client, API, authentication, service, cache, database and optional background worker. Hover/focus highlights immediate neighbors and changes the contextual region. Mobile switches to a vertical semantic list with inline, tap-selected details. Request/response information and all five narrative steps remain available without animation.
+
+`useArchitectureScroll` owns one responsive ScrollTrigger and mutates only animation attributes. The small SVG packet follows a precomputed orthogonal route: cache check → miss → database query → response. Reduced motion skips packet movement and highlights each path leg discretely. CSS sticky is disabled on mobile and short desktop viewports; no GSAP pinning or empty spacer sections are used. Context cleanup removes triggers and attributes. Continuous progress never enters React state.
+
+Skills use `src/data/skills.ts`, with the exact six groups requested. Hover/focus/tap reveals a category description while technology lists stay visible. Simple CSS transitions handle category emphasis. Related node IDs are typed metadata only, with no cross-section state coupling.
+
 ## Validation
 
-`npm test` covers:
+`npm test`: **16 passing tests**, including the original five. Added checks cover server-rendered architecture content, native keyboard buttons and contextual details, immediate dependencies, reduced-motion packet suppression (including both storage branches), StrictMode cleanup, desktop/mobile/motion breakpoint changes, mobile inline details without pinning, route continuity and round-trip order, typed skills rendering and expansion, and hero narrative emphasis.
 
-1. StrictMode does not duplicate the five story triggers; unmount removes all of them.
-2. Mobile leaves all four passages readable without desktop triggers.
-3. Reduced motion creates no story animation triggers.
-4. Crossing the desktop breakpoint removes and recreates triggers cleanly.
-5. Project slugs are unique, preview files exist and concepts are labelled honestly.
+`npm run build`: passes TypeScript and production bundling. No dependencies were added in phase two. The main JavaScript bundle increased from approximately 125.8 kB to 130.4 kB gzip; the new sections add no Three.js import. The existing lazy scene remains approximately 249 kB gzip, and its size warning is retained.
 
-These are real GSAP tests in a DOM emulation environment. They do not measure browser layout or GPU performance.
+These are code and real-GSAP tests in DOM emulation. They do not measure browser layout or GPU performance. Static review confirms natural content heights, no spacer sections, mobile CSS without sticky pinning, and semantic content independent of the SVG.
 
-Visual browser verification is currently blocked: the computer-use browser could not verify its required admin policy, including on retry. Desktop/mobile screenshots, live WebGL appearance and actual frame timings remain to be checked when that browser path is available. No alternate browser path was used to bypass it.
+Visual browser verification remains blocked: the computer-use browser could not verify its required admin policy, including on retry. Desktop/mobile screenshots, actual perceived sculpture size and frame timings remain to be checked when that browser path is available. No alternate browser path was used to bypass it; no FPS claim is made.
 
 ## Next phase — intentionally not built
 
-Each deferred section has a scoped TODO in its own folder. Start with the HTML/SVG backend architecture, then skills, verified experience, lab, about and contact. Activate the remaining navigation items only when their destination sections exist. Do not add a generic contact form.
+Experience, Playground, About and Contact remain scoped TODOs. Do not activate their navigation items until their destination sections exist. Add only verified experience and real contact links. Do not add a generic contact form.
 
 ## References
 

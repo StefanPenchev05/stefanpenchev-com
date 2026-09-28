@@ -39,23 +39,23 @@ function CameraRig({
     const y = reduced || mobile ? 0 : motion.current.pointerY * 0.2;
     camera.position.x = MathUtils.damp(
       camera.position.x,
-      4.6 - p * 1.2 + x,
+      4.3 - p * 0.7 + x,
       3,
       delta,
     );
     camera.position.y = MathUtils.damp(
       camera.position.y,
-      4.4 + p * 0.4 - y,
+      4.1 + p * 0.3 - y,
       3,
       delta,
     );
     camera.position.z = MathUtils.damp(
       camera.position.z,
-      7.7 + p * 0.5,
+      7.5 + p * 0.25,
       3,
       delta,
     );
-    camera.lookAt(0, -0.1, 0);
+    camera.lookAt(0, -0.05, 0);
   });
   return null;
 }
@@ -90,7 +90,12 @@ export default function Scene({ motion }: { motion: RefObject<SceneMotion> }) {
         <Canvas
           dpr={[1, 1.5]}
           frameloop={visible ? "always" : "never"}
-          camera={{ position: [4.6, 4.4, 7.7], fov: 39, near: 0.1, far: 35 }}
+          camera={{
+            position: [4.3, 4.1, 7.5],
+            fov: mobile ? 39 : 36,
+            near: 0.1,
+            far: 35,
+          }}
           gl={{ antialias: true, alpha: true, powerPreference: "low-power" }}
           fallback={<StaticArchitecture />}
           onCreated={({ gl }) => {

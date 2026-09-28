@@ -1,5 +1,5 @@
-# TODO — Skills
+# Engineering Index
 
-Next phase, intentionally not implemented in the initial build.
+Six responsibility groups come entirely from `src/data/skills.ts`. The category button exposes a short explanation on hover/focus or tap. Technology names remain visible even when descriptions are collapsed. No proficiency ratings or additional animation library is used.
 
-Build a technical index by responsibility: Frontend, Backend, Data, Infrastructure, Engineering, AI / Experimental. No rating bars or logo wall.
+Related architecture node IDs are typed metadata only; there is deliberately no cross-section scroll or hover state coupling.
