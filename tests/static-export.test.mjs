@@ -29,6 +29,14 @@ const projectLinks = {
   egil: [],
 };
 
+const workEntries = [
+  ["dto-recruitment-platform", "DTO Recruitment Platform", "In development", "No public access"],
+  ["artaicare", "ArtAICare", "Deployed web platform", "Sign-in required"],
+  ["skald-lab-ops", "Skald Lab Ops", "Online", "Workshop website only"],
+  ["dto-company-website", "DTO Partners Company Website", "Public website", "Open website"],
+  ["egil", "Egil", "Private internal tool", "Internal use only"],
+];
+
 function createStaticServer(basePath) {
   return createServer(async (request, response) => {
     try {
@@ -68,6 +76,11 @@ test("root and prefixed production exports served as static files", async (suite
 
       const exportedFiles = await readdir(outputDirectory, { recursive: true });
       assert.equal(exportedFiles.some((file) => /(^|\/)(docs|prompts|tests|\.artifacts|\.agents)(\/|$)|\.md$/i.test(file)), false);
+      const workPayloads = exportedFiles.filter((file) => /^work\/.*\.(html|txt)$/.test(file));
+      for (const file of workPayloads) {
+        assert.doesNotMatch(await readFile(resolve(outputDirectory, file), "utf8"),
+          /Project content and access|portfolio-verification\/SKILL\.md|Details coming soon|Stack unconfirmed/i, file);
+      }
 
       const server = createStaticServer(basePath);
       await new Promise((listen) => server.listen(0, "127.0.0.1", listen));
@@ -183,6 +196,8 @@ test("root and prefixed production exports served as static files", async (suite
       await checkFont(browser, site);
       await checkResponsiveShell(browser, site, basePath);
       await checkPortraitDelivery(browser, site);
+      await checkWorkPresentation(page, site, basePath);
+      assert.deepEqual(failures, []);
       if (!basePath && process.env.PORTFOLIO_SCREENSHOTS === "1") {
         await captureScreenshots(browser, site);
       }
@@ -198,9 +213,12 @@ test("root and prefixed production exports served as static files", async (suite
         const scripts = await enhancedPage.locator("script[src]").evaluateAll((tags) => tags.map((tag) => tag.src));
         assert.ok(scripts.length > 0);
         await Promise.all(scripts.map(async (url) => assert.equal((await fetch(url)).status, 200, url)));
-        await enhancedPage.getByRole("link", { name: "ArtAICare" }).click();
+        await enhancedPage.getByRole("link", { name: "Read project: ArtAICare", exact: true }).click();
         await enhancedPage.waitForURL(site + "/work/artaicare/");
         await enhancedPage.getByRole("heading", { name: "ArtAICare", exact: true }).waitFor();
+        await enhancedPage.getByRole("link", { name: "Back to all projects" }).click();
+        await enhancedPage.waitForURL(site + "/work/");
+        await enhancedPage.getByRole("heading", { name: "Selected work", level: 1 }).waitFor();
         assert.deepEqual(scriptErrors, []);
       } finally {
         await enhancedPage.close();
@@ -221,7 +239,8 @@ async function checkNativeMenu(page, site, basePath) {
   await page.keyboard.press("Tab");
   assert.equal(await toggle.evaluate((element) => element === document.activeElement), true);
   await page.keyboard.press("Tab");
-  assert.equal(await page.evaluate(() => document.activeElement.textContent), "DTO Recruitment Platform");
+  const firstProject = page.getByRole("link", { name: "Read project: DTO Recruitment Platform", exact: true });
+  assert.equal(await firstProject.evaluate((link) => link === document.activeElement), true);
 
   await toggle.focus();
   await page.keyboard.press("Space");
@@ -452,6 +471,86 @@ async function checkPortraitDelivery(browser, site) {
     release.resolve();
     await page.close();
   }
+}
+
+async function checkWorkPresentation(page, site, basePath) {
+  const tech = [
+    "Angular, TypeScript, Rust, PostgreSQL, Redis, Docker, Makefile",
+    "MongoDB, Express.js, React, Node.js, Python, Sentence-BERT, Nginx, Ubuntu, SSH",
+    "Django",
+    null,
+    "Ollama, Retrieval-augmented generation",
+  ];
+  const accessActions = [null, "Platform sign-in", "Visit Skald Lab", "Visit website", null];
+
+  for (const [path, level, entries] of [
+    ["/", 3, workEntries.slice(0, 3)],
+    ["/work/", 2, workEntries],
+  ]) {
+    await page.goto(site + path);
+    const list = page.locator(".project-list");
+    assert.deepEqual(await list.getByRole("heading", { level }).allTextContents(), entries.map(([, title]) => title));
+    for (const [index, [slug, title, status, access]] of entries.entries()) {
+      const row = list.getByRole("article").nth(index);
+      assert.equal(await row.getByRole("link").count(), 1);
+      const link = row.getByRole("link", { name: `Read project: ${title}`, exact: true });
+      assert.equal(await link.getAttribute("href"), `${basePath}/work/${slug}/`);
+      assert.equal(await row.getByText(status, { exact: true }).isVisible(), true);
+      assert.equal(await row.getByText(access, { exact: true }).isVisible(), true);
+      assert.ok((await link.boundingBox()).height >= 44);
+    }
+    assert.equal(await list.locator("img").count(), 0);
+    if (path === "/") {
+      await page.getByRole("link", { name: "View all projects" }).click();
+      await page.waitForURL(site + "/work/");
+    }
+  }
+
+  for (const [index, [slug, title, status, access]] of workEntries.entries()) {
+    assert.equal((await page.goto(`${site}/work/${slug}/`)).status(), 200);
+    assert.equal((await page.reload()).status(), 200);
+    const main = page.getByRole("main");
+    assert.equal(await main.getByRole("heading", { name: title, level: 1, exact: true }).count(), 1);
+    assert.equal(await main.getByText(status, { exact: true }).isVisible(), true);
+    assert.equal(await main.getByText(access, { exact: true }).isVisible(), true);
+    assert.equal(await main.getByText("Source code", { exact: true }).count(), accessActions[index] ? 0 : 1);
+    assert.deepEqual(await main.locator('a[href^="https://"]').allTextContents(), accessActions[index] ? [accessActions[index]] : []);
+    assert.deepEqual(await main.getByRole("heading", { level: 2 }).allTextContents(), tech[index] ? ["My contribution", "Technologies"] : ["My contribution"]);
+    if (tech[index]) assert.equal(await main.getByText(tech[index], { exact: true }).isVisible(), true);
+    assert.equal(await main.getByRole("link", { name: "Back to work", exact: true }).getAttribute("href"), basePath + "/work/");
+    assert.equal(await main.getByRole("link", { name: "Back to all projects", exact: true }).getAttribute("href"), basePath + "/work/");
+    assert.equal(await main.locator("img, figure").count(), 0);
+    assert.doesNotMatch(await main.innerText(), /TBD|Details coming soon|Stack unconfirmed/i);
+    if (slug === "skald-lab-ops") {
+      assert.equal(await main.getByText("The link opens the public workshop website. The operations system is internal.").isVisible(), true);
+    }
+    if (slug === "artaicare") {
+      assert.equal(await main.getByText(/Collaborated with a separate developer/).isVisible(), true);
+    }
+  }
+
+  for (const [width, height, path] of [
+    [320, 640, "/work/"], [320, 640, "/work/artaicare/"],
+    [390, 844, "/work/dto-company-website/"], [667, 375, "/work/"],
+    [768, 900, "/work/"], [1920, 1080, "/work/skald-lab-ops/"],
+  ]) {
+    await page.setViewportSize({ width, height });
+    await page.goto(site + path);
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${path} at ${width}px`);
+  }
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(site + "/work/");
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Tab");
+  const firstProject = page.getByRole("link", { name: "Read project: DTO Recruitment Platform" });
+  assert.ok(await firstProject.evaluate((link) => link === document.activeElement &&
+    link.matches(":focus-visible") && getComputedStyle(link).outlineWidth === "2px"));
+  await page.keyboard.press("Enter");
+  await page.waitForURL(site + "/work/dto-recruitment-platform/");
+  await page.getByRole("link", { name: "Back to work", exact: true }).click();
+  await page.waitForURL(site + "/work/");
 }
 
 async function captureScreenshots(browser, site) {

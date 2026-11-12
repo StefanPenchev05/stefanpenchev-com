@@ -9,26 +9,42 @@ describe("verified portfolio content", () => {
   it("enumerates five distinct project routes and three featured projects", () => {
     expect(projects.map(({ slug }) => slug)).toEqual([
       "dto-recruitment-platform",
-      "dto-company-website",
       "artaicare",
       "skald-lab-ops",
+      "dto-company-website",
       "egil",
     ]);
-    expect(projects.filter(({ featured }) => featured)).toHaveLength(3);
+    expect(projects.filter(({ featured }) => featured).map(({ slug }) => slug))
+      .toEqual(["dto-recruitment-platform", "artaicare", "skald-lab-ops"]);
   });
 
   it("keeps public destinations separate from source visibility and visitor access", () => {
     expect(projects.map(({ visitorAccess, externalLink }) => [visitorAccess, externalLink?.href])).toEqual([
       ["unavailable", undefined],
-      ["public website", "https://dtopartners.com/"],
       ["sign-in", "https://therapy.artaicare.com/auth/signin"],
       ["public homepage only", "https://skaldlab.com/"],
+      ["public website", "https://dtopartners.com/"],
       ["internal", undefined],
     ]);
     expect(projects.filter(({ sourceVisibility }) => sourceVisibility === "private").map(({ slug }) => slug))
       .toEqual(["dto-recruitment-platform", "egil"]);
     expect(projects.every(({ sourceLink, media }) => sourceLink === undefined && media === undefined)).toBe(true);
     expect(projects.find(({ slug }) => slug === "dto-company-website")?.technologies).toBeUndefined();
+  });
+
+  it("keeps technologies scoped to the project for which they were confirmed", () => {
+    expect(projects.map(({ technologies }) => technologies)).toEqual([
+      ["Angular", "TypeScript", "Rust", "PostgreSQL", "Redis", "Docker", "Makefile"],
+      ["MongoDB", "Express.js", "React", "Node.js", "Python", "Sentence-BERT", "Nginx", "Ubuntu", "SSH"],
+      ["Django"],
+      undefined,
+      ["Ollama", "Retrieval-augmented generation"],
+    ]);
+  });
+
+  it("shows project dates only for the confirmed ArtAICare contribution period", () => {
+    expect(projects.filter(({ period }) => period).map(({ slug, period }) => [slug, period]))
+      .toEqual([["artaicare", "January 2025 to 20 September 2025"]]);
   });
 
   it("preserves fixed employment wording and two freelance services", () => {

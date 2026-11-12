@@ -11,7 +11,7 @@ export default function HomePage() {
       <HomeHero />
       <section id="selected-work" tabIndex={-1} className="site-container section space-y-5" aria-labelledby="work-heading">
         <h2 id="work-heading">Selected work</h2>
-        <ProjectList projects={projects.filter((project) => project.featured)} />
+        <ProjectList projects={projects.filter((project) => project.featured)} heading="h3" />
         <Link href="/work/" className="standalone-link">View all projects</Link>
       </section>
       <div className="border-y border-rule">

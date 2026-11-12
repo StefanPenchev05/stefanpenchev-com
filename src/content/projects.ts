@@ -18,8 +18,22 @@ export type Project = {
   contributions: readonly string[];
   externalLink?: ProjectLink;
   sourceLink?: ProjectLink;
-  media?: readonly { path: `/images/${string}`; alt: string; width: number; height: number }[];
+  media?: readonly {
+    path: `/images/${string}`;
+    alt: string;
+    width: number;
+    height: number;
+    caption?: string;
+  }[];
   featured?: boolean;
+};
+
+export const visitorAccessLabels: Record<Project["visitorAccess"], string> = {
+  unavailable: "No public access",
+  "public website": "Open website",
+  "sign-in": "Sign-in required",
+  "public homepage only": "Workshop website only",
+  internal: "Internal use only",
 };
 
 export const projects: readonly Project[] = [
@@ -28,8 +42,8 @@ export const projects: readonly Project[] = [
     title: "DTO Recruitment Platform",
     organization: "DTO Partners",
     type: "Full-stack recruitment product",
-    summary: "A recruitment platform for candidate onboarding and discovery, with dedicated workspaces for candidates, companies and administrators.",
-    role: "Software engineering, architecture, code organisation and implementation",
+    summary: "A recruitment platform with dedicated workspaces for candidates, companies and administrators.",
+    role: "Full-stack engineering, architecture and code organisation",
     status: "In development",
     visitorAccess: "unavailable",
     sourceVisibility: "private",
@@ -41,24 +55,11 @@ export const projects: readonly Project[] = [
     featured: true,
   },
   {
-    slug: "dto-company-website",
-    title: "DTO Partners Company Website",
-    organization: "DTO Partners",
-    type: "Company website",
-    summary: "A responsive informational website for DTO Partners in English and Polish.",
-    role: "Software engineering",
-    status: "Public website",
-    visitorAccess: "public website",
-    sourceVisibility: "unknown",
-    contributions: ["Delivered the informational website with English and Polish localisation."],
-    externalLink: { href: "https://dtopartners.com/", label: "Visit website" },
-  },
-  {
     slug: "artaicare",
     title: "ArtAICare",
     organization: "ArtAICare",
-    type: "Web platform",
-    summary: "A MERN web platform with Python recommendation features and Sentence-BERT integration, developed within a wider team that also built a separate VR application.",
+    type: "Art-therapy web platform",
+    summary: "An art-therapy web platform with Python recommendation features and support for a university study.",
     role: "Sole programmer for the web platform within the product team",
     period: "January 2025 to 20 September 2025",
     status: "Deployed web platform",
@@ -66,8 +67,9 @@ export const projects: readonly Project[] = [
     sourceVisibility: "unknown",
     technologies: ["MongoDB", "Express.js", "React", "Node.js", "Python", "Sentence-BERT", "Nginx", "Ubuntu", "SSH"],
     contributions: [
-      "Built the web platform architecture, services and APIs and integrated Python recommendation features and Sentence-BERT.",
-      "Collaborated with a separate VR developer and worked on a study-specific application involving EEG data and Python scripts.",
+      "Designed the web platform architecture, built backend services and APIs, and integrated Python recommendation features and Sentence-BERT.",
+      "Collaborated with a separate developer on the connection between the web platform and the VR application.",
+      "Worked on a study-specific application involving EEG data and Python scripts.",
       "Deployed the web platform on an Ubuntu VPS with Nginx and administered it over SSH.",
     ],
     externalLink: { href: "https://therapy.artaicare.com/auth/signin", label: "Platform sign-in" },
@@ -78,9 +80,8 @@ export const projects: readonly Project[] = [
     title: "Skald Lab Ops",
     organization: "Skald Solutions",
     type: "Workshop operations backend",
-    summary: "A Django backend for the operations of a workshop serving ages 8–18.",
+    summary: "Backend software for member records, bookings, attendance and project progress at a workshop for ages 8–18.",
     role: "Backend implementation",
-    period: "July–October 2026",
     status: "Online",
     visitorAccess: "public homepage only",
     sourceVisibility: "unknown",
@@ -90,17 +91,29 @@ export const projects: readonly Project[] = [
     featured: true,
   },
   {
+    slug: "dto-company-website",
+    title: "DTO Partners Company Website",
+    organization: "DTO Partners",
+    type: "Company website",
+    summary: "A responsive company website presenting DTO Partners in English and Polish.",
+    role: "Software engineering",
+    status: "Public website",
+    visitorAccess: "public website",
+    sourceVisibility: "unknown",
+    contributions: ["Designed and built the responsive informational site with English and Polish localisation. The initial delivery had no backend."],
+    externalLink: { href: "https://dtopartners.com/", label: "Visit website" },
+  },
+  {
     slug: "egil",
     title: "Egil",
     organization: "Skald Solutions",
-    type: "Local retrieval-augmented generation assistant",
-    summary: "A local assistant that searches a curated business-audit knowledge base to answer questions about audit methodology.",
+    type: "Local audit assistant",
+    summary: "A local assistant for querying a curated business-audit knowledge base about audit methodology and business failure modes.",
     role: "Built the assistant",
-    period: "July–October 2026",
     status: "Private internal tool",
     visitorAccess: "internal",
     sourceVisibility: "private",
     technologies: ["Ollama", "Retrieval-augmented generation"],
-    contributions: ["Built the retrieval-augmented assistant with local model execution through Ollama."],
+    contributions: ["Built the assistant to retrieve relevant material from the knowledge base and use it to generate answers, with Ollama running the model locally."],
   },
 ];

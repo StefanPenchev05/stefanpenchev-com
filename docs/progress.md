@@ -84,3 +84,39 @@ All paths are inside the ignored `.artifacts/part-3/` directory. Baselines were 
 ### Part 4 handover
 
 The opening and Selected work anchor are ready for the project-presentation phase. The existing project layouts and verified access labels remain in place. The 800 px portrait limits fine detail on high-density desktop displays. A higher-resolution portrait is optional and would require an approved source.
+
+## Part 4 — selected work and project overviews
+
+The homepage features DTO Recruitment Platform, ArtAICare and Skald Lab Ops in that order. The work index adds DTO Partners Company Website and Egil. Both use the shared editorial `ProjectList` with one labelled project link per row. The five existing project routes use one overview layout with a stone title treatment, a reading column and separate contribution, product status, source and visitor-access facts. The project registry preserves approved URLs and confirmed stacks. Skald engagement dates are kept with experience, and the DTO company website omits the unconfirmed framework. The selected-work anchor, Part 3 hero and shared shell remain in place.
+
+Visual review tightened the desktop row padding, widened the mobile values column and kept tablet links close to their summaries. Short overview contributions use prose and mobile overview facts use compact label/value rows. Project rows omit decorative sequence markers. [Design system](design-system.md#project-presentation) · [Project content and media workflow](project-content.md)
+
+Neither `.agents/skills/portfolio-ui/SKILL.md` nor `.agents/skills/portfolio-verification/SKILL.md` existed at the requested paths. The Part 4 prompt supplied the workflow. No substitute skill or motion workflow was used.
+
+### Verification
+
+- **PASS** — `npm run typecheck`, `npm run lint`, `npm test` (16 tests), and `git diff --check`. An initial typecheck hit a duplicate `LayoutProps` declaration. Four byte-identical duplicate generated files in the ignored `.next/types/` directory were removed and the command passed on retry.
+- **PASS** — `PLAYWRIGHT_CHANNEL=chrome npm run test:export` built and served both `/` and `/portfolio-preview` from files in Chrome 157.0.8103.78. It verified project order and links, all five direct entries and reloads, keyboard and back navigation, exact approved access links, confirmed stack attribution, omitted media and unknown stack, true 404, and absence of internal planning files and checked editorial markers in work payloads. Existing portrait/PDF bytes, font fallback, responsive shell, menu and hero checks passed.
+- **PASS** — Representative layouts at 320, 390, 667 × 375 landscape, 768, 1440 and 1920 CSS px. Chrome touch emulation opened the DTO company website overview and returned to Work with JavaScript disabled. Native 200% page zoom on the root export reflowed the work index, ArtAICare and DTO company website overview from 1280 × 813 to 640 × 406 CSS px at DPR 2 with no horizontal overflow.
+- **NOT RUN** — Firefox and Playwright WebKit binaries were absent. Safari WebDriver refused the session because remote automation was disabled. Screen-reader testing, live client-product access and a fresh dependency audit were not run. The seven moderate lint-tooling audit findings remain inherited and unresolved.
+
+### Reviewed screenshots
+
+Files are in the ignored `.artifacts/part-4/` directory. Baselines were opened before edits. Updated captures were opened during visual review. Desktop and mobile full-page captures include the shared footer.
+
+| Screenshot | Route and viewport |
+| --- | --- |
+| `baseline-selected-390.png`, `baseline-selected-1440.png` | Homepage Selected work, 390 × 844 and 1440 × 1000, DPR 1 |
+| `baseline-work-390.png`, `baseline-work-1440.png` | `/work/`, 390 × 844 and 1440 × 1000, DPR 1 |
+| `baseline-artaicare-390.png`, `baseline-artaicare-1440.png` | ArtAICare, 390 × 844 and 1440 × 1000, DPR 1 |
+| `selected-390.png`, `selected-1440.png`, `hero-to-work-1440.png` | Homepage section and desktop transition, 390 × 844 and 1440 × 1000, DPR 1 |
+| `work-390.png`, `work-1440.png` | Full work index, 390 × 844 and 1440 × 1000, DPR 1 |
+| `artaicare-390.png`, `artaicare-1440.png` | Full ArtAICare overview, 390 × 844 and 1440 × 1000, DPR 1 |
+| `egil-390.png`, `dto-website-1440.png` | Egil private state at 390 × 844 and DTO company site at 1440 × 1000, DPR 1 |
+| `work-320.png`, `work-landscape-667.png`, `work-768.png` | Work index at 320 × 640, 667 × 375 and 768 × 900, DPR 1 |
+| `skald-1920.png` | Skald Lab Ops at 1920 × 1080, DPR 1 |
+| `work-focus-390.png`, `artaicare-zoom-200.png` | First project link focused at 390 × 844, DPR 1, and ArtAICare at 640 × 406 CSS px, DPR 2, at native 200% zoom |
+
+### Part 5 handover
+
+The homepage and index now link to all five factual overviews. Approved screenshots, sharing permission and specific engineering evidence can enrich them later. The current project views are ready for Part 5 work on story, experience, services and contact.

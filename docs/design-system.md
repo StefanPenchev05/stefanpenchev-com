@@ -18,7 +18,7 @@ Manrope is an upright variable face with weights 200–800. The Latin WOFF2 is 2
 
 `next/font/local` preloads the bundled face and uses `font-display: swap`. Tailwind's inline font token resolves to that face with `system-ui, sans-serif` fallback. Chrome confirmed that Manrope rendered, that a blocked WOFF2 used the system fallback and that the CSS, WOFF2 and license resolved under both export paths. The build uses the checked-in WOFF2 and the browser makes no third-party font or stylesheet requests. [Next.js font optimization](https://nextjs.org/docs/app/getting-started/fonts)
 
-The container caps at 90 rem (1440 px), with 24–72 px fluid gutters, roughly 66 characters per line for reading copy and 56–112 px fluid section padding. These defaults use a 4/8 px spacing rhythm, with finer spacing for control padding and rules. Project listings retain their existing two-column grid and typographic covers.
+The container caps at 90 rem (1440 px), with 24–72 px fluid gutters, roughly 66 characters per line for reading copy and 56–112 px fluid section padding. These defaults use a 4/8 px spacing rhythm, with finer spacing for control padding and rules.
 
 ## Homepage opening
 
@@ -29,6 +29,14 @@ At the default root size Chrome measured the display at 56 px at 320, 61 px at 3
 The approved 800 × 800 transparent PNG has explicit intrinsic dimensions and a reserved square box. Next Image uses the existing unoptimized export configuration and public asset helper, with `loading="eager"` and `fetchPriority="high"`. The local check saw one direct portrait request and no optimizer URL, and the delayed image filled the same box after it decoded. At 560 CSS px and DPR 2 the source supplies 800 pixels for 1120 device pixels. Fine detail is limited at that density. A future approved higher-resolution source can retain the layout by updating the intrinsic dimensions. [Next.js Image](https://nextjs.org/docs/app/api-reference/components/image)
 
 The name and role use ink on stone (11.99:1). The location line uses muted ink on stone (5.29:1). The work link uses paper on accent blue (7.05:1), hover blue (10.57:1) and ink when pressed (15.81:1). The Contact link and the blue keyboard ring on stone measure 5.35:1. Copy and controls sit clear of the portrait.
+
+## Project presentation
+
+The homepage and work index share ruled editorial rows. Below 48 rem, the title and purpose lead into compact labelled facts, followed by a single project link. At 48 rem and up, a 3:2 grid places the facts beside the title and summary. Project titles are 30–56 px at the default root size. There are no fixed-height image areas or decorative sequence markers. The visible “Read project” label and arrow share one focus target whose accessible name adds the project title. [W3C link purpose](https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-in-context.html)
+
+The overview’s full-width stone cover carries the one project heading and purpose. The 40–80 px heading wraps naturally and stays within the shared container. On paper below, the labelled facts appear above the reading column on mobile and alongside it in a 2:1 grid from 48 rem. Product status, role, source visibility and visitor access have separate labels. The public action, when approved, appears beside the access description. Short contributions use prose. Longer contributions use bullets and the technology section appears only where the stack is confirmed.
+
+Project styles reuse the established ink, muted text, accent and focus tokens on paper and stone. No new surface or color pairing is introduced. The cover is HTML typography and needs no image asset. Approved optional media will appear inline below the overview copy as a figure with intrinsic dimensions, alt text and an optional caption. See [project content](project-content.md) for the approval and asset workflow.
 
 ## Colors and contrast
 
@@ -60,4 +68,4 @@ Every page has one shared footer and one `#contact` target. Header Contact alway
 
 ## Visual evidence and limits
 
-See [Part 2 verification and screenshots](progress.md#part-2--visual-system-and-responsive-shell) and [Part 3 verification and screenshots](progress.md#part-3--portrait-led-opening). Review used Chrome 157.0.8103.78. Firefox, WebKit and screen-reader checks were not run. Both requested local skill files were missing and the Part 3 prompt supplied the workflow. The native disclosure is operable without JavaScript. Escape, breakpoint focus transfer and client-route dismissal are enhancements.
+See [Part 4 verification and screenshots](progress.md#part-4--selected-work-and-project-overviews), [Part 2 verification and screenshots](progress.md#part-2--visual-system-and-responsive-shell) and [Part 3 verification and screenshots](progress.md#part-3--portrait-led-opening). Review used Chrome 157.0.8103.78. Firefox, WebKit and screen-reader checks were not run. Both requested local skill files were missing and the Part 3 prompt supplied the workflow. The native disclosure is operable without JavaScript. Escape, breakpoint focus transfer and client-route dismissal are enhancements.

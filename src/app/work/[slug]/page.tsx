@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { projects, type Project } from "@/content/projects";
+import { projects, visitorAccessLabels, type Project } from "@/content/projects";
 import { publicAssetUrl } from "@/lib/assets";
 
 type ProjectPageProps = { params: Promise<{ slug: string }> };
@@ -29,42 +29,72 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const project = await getProject(params);
 
   return (
-    <article className="site-container section space-y-8">
-      <Link className="standalone-link" href="/work/">All projects</Link>
-      <header className="space-y-3 bg-stone p-6 sm:p-8">
-        <p className="metadata">{project.organization} · {project.type}</p>
-        <h1>{project.title}</h1>
-        <p>{project.summary}</p>
+    <article>
+      <header className="bg-stone">
+        <div className="site-container project-cover">
+          <Link href="/work/" className="standalone-link">Back to work</Link>
+          <p className="metadata">{project.type}</p>
+          <h1>{project.title}</h1>
+          <p className="lead">{project.summary}</p>
+        </div>
       </header>
-      <dl className="grid gap-4 sm:grid-cols-2">
-        <div><dt className="font-semibold">Role</dt><dd>{project.role}</dd></div>
-        {project.period && <div><dt className="font-semibold">Contribution period</dt><dd>{project.period}</dd></div>}
-        <div><dt className="font-semibold">Status</dt><dd>{project.status}</dd></div>
-        <div><dt className="font-semibold">Visitor access</dt><dd className="capitalize">{project.visitorAccess}</dd></div>
-        {project.sourceVisibility !== "unknown" && (
-          <div><dt className="font-semibold">Source code</dt><dd className="capitalize">{project.sourceVisibility}</dd></div>
-        )}
-      </dl>
-      <section className="space-y-3">
-        <h2>Contributions</h2>
-        <ul className="max-w-[68ch] list-disc space-y-2 pl-6">
-          {project.contributions.map((item) => <li key={item}>{item}</li>)}
-        </ul>
-      </section>
-      {!!project.technologies?.length && (
-        <section className="space-y-2">
-          <h2>Technologies</h2>
-          <p>{project.technologies.join(", ")}</p>
-        </section>
-      )}
-      {project.media?.map(({ path, alt, width, height }) => (
-        <Image key={path} src={publicAssetUrl(path)} alt={alt} width={width} height={height} className="h-auto" />
-      ))}
-      <div className="flex flex-wrap gap-x-6 gap-y-2 empty:hidden">
-        {project.externalLink && <a className="standalone-link" href={project.externalLink.href}>{project.externalLink.label}</a>}
-        {project.sourceVisibility === "public" && project.sourceLink && (
-          <a className="standalone-link" href={project.sourceLink.href}>{project.sourceLink.label}</a>
-        )}
+
+      <div className="site-container project-overview">
+        <dl className="project-overview-facts">
+          {project.organization !== project.title && (
+            <div><dt>Organisation</dt><dd>{project.organization}</dd></div>
+          )}
+          <div><dt>Role</dt><dd>{project.role}</dd></div>
+          {project.period && <div><dt>Contribution period</dt><dd>{project.period}</dd></div>}
+          <div><dt>Status</dt><dd>{project.status}</dd></div>
+          {project.sourceVisibility !== "unknown" && (
+            <div>
+              <dt>Source code</dt>
+              <dd>{project.sourceVisibility === "private" ? "Private" : "Public"}</dd>
+              {project.sourceVisibility === "public" && project.sourceLink && (
+                <dd><a className="standalone-link" href={project.sourceLink.href}>{project.sourceLink.label}</a></dd>
+              )}
+            </div>
+          )}
+          <div>
+            <dt>Visitor access</dt>
+            <dd>{visitorAccessLabels[project.visitorAccess]}</dd>
+            {project.visitorAccess === "public homepage only" && (
+              <dd className="metadata">The link opens the public workshop website. The operations system is internal.</dd>
+            )}
+            {project.externalLink && (
+              <dd><a className="standalone-link" href={project.externalLink.href}>{project.externalLink.label}</a></dd>
+            )}
+          </div>
+        </dl>
+
+        <div className="project-reading">
+          <section>
+            <h2>My contribution</h2>
+            {project.contributions.length === 1 ? (
+              <p>{project.contributions[0]}</p>
+            ) : (
+              <ul className="list-disc space-y-2 pl-5">
+                {project.contributions.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+            )}
+          </section>
+          {!!project.technologies?.length && (
+            <section>
+              <h2>Technologies</h2>
+              <p>{project.technologies.join(", ")}</p>
+            </section>
+          )}
+          {project.media?.map(({ path, alt, width, height, caption }) => (
+            <figure key={path} className="space-y-2">
+              <Image src={publicAssetUrl(path)} alt={alt} width={width} height={height} className="h-auto max-w-full" />
+              {caption && <figcaption className="metadata">{caption}</figcaption>}
+            </figure>
+          ))}
+        </div>
+        <div className="project-return">
+          <Link href="/work/" className="standalone-link">Back to all projects</Link>
+        </div>
       </div>
     </article>
   );
