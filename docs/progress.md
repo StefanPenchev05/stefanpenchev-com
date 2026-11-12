@@ -46,3 +46,41 @@ All paths are relative to the repository root. Screenshots are ignored by Git an
 ### Part 3 handover
 
 Reuse Manrope, the shared container and type roles, the responsive header and the contact footer when composing the portrait-led opening. The approved portrait remains at its original path and intrinsic size. Approved project screenshots, permissions for private interfaces, deeper case-study evidence, the DTO company-site framework, the final domain and the public GitHub profile remain pending. A concrete Go or personal project is optional. Review availability and project status before eventual publication.
+
+## Part 3 — portrait-led opening
+
+`src/components/home-hero.tsx` renders the approved copy, one oversized name heading, the original portrait and the work and contact links. `src/app/page.tsx` integrates it with the existing Selected work section and makes the work anchor a keyboard focus destination. `src/app/globals.css` defines the responsive composition using the existing palette and typography. The desktop portrait sits on the section baseline, and narrow layouts put both links before the portrait. The short landscape layout keeps the display size and fits the two names on one line when space permits.
+
+Visual review corrected single-word line endings and tightened the short landscape layout. The enlarged-text check also exposed two inherited shell constraints. The mobile toggle now gets its own row when the header container is under 16 rem, and the two footer actions can contract with their column. The navigation and footer keep their existing semantics, links and ordinary-width layout.
+
+Neither `.agents/skills/portfolio-ui/SKILL.md` nor `.agents/skills/portfolio-verification/SKILL.md` existed in the repository. No skill content was used. This phase followed the complete workflow in the Part 3 prompt.
+
+### Verification
+
+- **PASS** — `npm run typecheck`, `npm run lint`, `npm test` (14 tests) and `git diff --check`.
+- **PASS** — `PLAYWRIGHT_CHANNEL=chrome npm run test:export` in Chrome 157.0.8103.78. Both `npm run build` variants passed the file-only server suite at root and `/portfolio-preview`. Existing route, reload, 404, asset, navigation and font checks passed. New assertions cover the exported heading and approved copy, keyboard focus and both hash links, one eager high-priority portrait at the exact static URL, intrinsic dimensions and the absence of a responsive optimizer URL.
+- **PASS** — At 320 CSS px with JavaScript disabled and reduced motion, a held portrait request left the work action operable and reserved a square box that kept the same dimensions after decode. A second run blocked both the portrait and font. With doubled root text, the name grew and the page reflowed without horizontal scrolling. The native menu and contact action remained operable.
+- **PASS** — Native Chrome 200% page zoom on the root export. The 1280 × 813 CSS viewport at 100% became 640 × 406 at 200%, with DPR increasing from 1 to 2. The displayed name increased from about 131 to 160 device px and the role from 22 to about 40 device px. The mobile menu opened, Escape restored focus, and the work link reached Selected work without horizontal overflow.
+- **PASS** — Portrait and CV SHA-256 hashes match Parts 1 and 2. The lockfile, dependency versions, font, content model and static-export configuration are preserved.
+- **NOT RUN** — Firefox and Playwright WebKit binaries were absent. Safari 27.0.1 WebDriver declined the session because Allow remote automation is off. No browser settings were changed to enable it. Screen-reader validation and a fresh tooling audit were not run. The seven moderate lint-tooling findings remain inherited and unresolved.
+
+### Reviewed screenshots
+
+All paths are inside the ignored `.artifacts/part-3/` directory. Baselines were captured and inspected before editing. The images listed below were opened and reviewed after the final build, including the transition to Selected work, the portrait baseline, the name and copy, and menu and fallback focus states.
+
+| Screenshot | Viewport and conditions |
+| --- | --- |
+| `baseline-home-390.png`, `baseline-home-1440.png` | 390 × 844 and 1440 × 1000, DPR 1 |
+| `home-390.png`, `home-390-full.png` | 390 × 844, DPR 1, initial and full page |
+| `home-1440.png`, `home-1440-full.png` | 1440 × 1000, DPR 1, initial and full page |
+| `home-320.png`, `home-360.png`, `home-768.png` | 320 × 640, 360 × 800 and 768 × 900, DPR 1 |
+| `home-1024.png`, `home-1920.png` | 1024 × 768 and 1920 × 1080, DPR 1 |
+| `home-short-1366.png`, `home-landscape-667.png` | 1366 × 520 and 667 × 375, DPR 1 |
+| `menu-open-390.png`, `about-390.png` | 390 × 844, DPR 1, open homepage menu and shared-shell smoke check |
+| `fallback-390-no-js.png` | 390 × 844, DPR 1, JavaScript off, reduced motion, font and portrait blocked, work link focused |
+| `home-zoom-200.png` | Native Chrome 200%, 640 × 406 CSS px, DPR 2, focus returned to menu |
+| `home-1440-dpr2.png` | 1440 × 1000 CSS px, DPR 2, original portrait reviewed at its maximum 560 CSS px display size |
+
+### Part 4 handover
+
+The opening and Selected work anchor are ready for the project-presentation phase. The existing project layouts and verified access labels remain in place. The 800 px portrait limits fine detail on high-density desktop displays. A higher-resolution portrait is optional and would require an approved source.

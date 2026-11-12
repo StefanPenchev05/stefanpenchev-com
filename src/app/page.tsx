@@ -1,38 +1,15 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ExperienceList } from "@/components/experience-list";
+import { HomeHero } from "@/components/home-hero";
 import { ProjectList } from "@/components/project-list";
-import { identity, services, story } from "@/content/profile";
+import { services, story } from "@/content/profile";
 import { projects } from "@/content/projects";
-import { assets, publicAssetUrl } from "@/lib/assets";
 
 export default function HomePage() {
   return (
     <>
-      <section className="bg-stone">
-        <div className="site-container grid items-center gap-8 pt-10 md:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
-          <div className="space-y-3 md:pb-10">
-            <h1>{identity.name}</h1>
-            <p className="lead">{identity.role}</p>
-            <p>{identity.intro}</p>
-            <p>Based in {identity.location}.</p>
-            <ul className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
-              <li><a className="standalone-link" href="#selected-work">View my work</a></li>
-              <li><a className="standalone-link" href="#contact">Get in touch</a></li>
-              <li><a className="standalone-link" href={publicAssetUrl(assets.cv)}>View CV</a></li>
-            </ul>
-          </div>
-          <Image
-            src={publicAssetUrl(assets.portrait)}
-            alt="Portrait of Stefan Penchev"
-            width={800}
-            height={800}
-            loading="eager"
-            className="h-auto w-[min(100%,20rem)] justify-self-center md:self-end"
-          />
-        </div>
-      </section>
-      <section id="selected-work" className="site-container section space-y-5" aria-labelledby="work-heading">
+      <HomeHero />
+      <section id="selected-work" tabIndex={-1} className="site-container section space-y-5" aria-labelledby="work-heading">
         <h2 id="work-heading">Selected work</h2>
         <ProjectList projects={projects.filter((project) => project.featured)} />
         <Link href="/work/" className="standalone-link">View all projects</Link>

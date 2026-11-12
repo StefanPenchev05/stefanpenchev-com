@@ -125,15 +125,43 @@ test("root and prefixed production exports served as static files", async (suite
       assert.equal(await page.evaluate(() => document.activeElement.textContent), "Skip to content");
       await page.keyboard.press("Enter");
       assert.equal(await page.evaluate(() => document.activeElement.id), "main");
-      await page.getByRole("link", { name: "View my work" }).click();
+      const hero = page.getByRole("region", { name: "Stefan Penchev", exact: true });
+      const workAction = hero.getByRole("link", { name: "View my work", exact: true });
+      const contactAction = hero.getByRole("link", { name: "Get in touch", exact: true });
+      assert.equal(await hero.getByRole("heading", { level: 1, name: "Stefan Penchev", exact: true }).count(), 1);
+      assert.equal(await hero.getByText("Full-Stack & Backend Developer", { exact: true }).isVisible(), true);
+      assert.equal(await hero.getByText("I build complete web applications and the systems behind them.", { exact: true }).isVisible(), true);
+      assert.equal(await hero.getByText("Based in Luxembourg. On-site here, or remote across Europe.", { exact: true }).isVisible(), true);
+      assert.equal(await hero.getByRole("link").count(), 2);
+      assert.equal(await workAction.getAttribute("href"), "#selected-work");
+      assert.equal(await contactAction.getAttribute("href"), "#contact");
+      assert.equal(await page.locator("#selected-work").count(), 1);
+      await page.keyboard.press("Tab");
+      assert.equal(await workAction.evaluate((link) => {
+        const style = getComputedStyle(link);
+        return link === document.activeElement && link.matches(":focus-visible") &&
+          style.outlineStyle === "solid" && style.outlineWidth === "2px" &&
+          style.outlineColor === "rgb(37, 68, 199)" && style.outlineOffset === "4px";
+      }), true);
+      await page.keyboard.press("Enter");
       await page.waitForURL(`${site}/#selected-work`);
+      assert.equal(await page.locator("#selected-work").evaluate((section) => section === document.activeElement), true);
+      await contactAction.click();
+      await page.waitForURL(`${site}/#contact`);
 
       const portrait = page.getByRole("img", { name: "Portrait of Stefan Penchev" });
       assert.equal(await portrait.getAttribute("src"), `${basePath}/images/stefan-penchev.png`);
       assert.equal(await portrait.evaluate((img) => img.naturalWidth), 800);
+      assert.equal(await hero.locator("img").count(), 1);
+      for (const [attribute, value] of [["width", "800"], ["height", "800"], ["loading", "eager"], ["fetchpriority", "high"], ["srcset", null]]) {
+        assert.equal(await portrait.getAttribute(attribute), value, attribute);
+      }
       for (const width of [360, 390, 768, 1024, 1440, 1920]) {
         await page.setViewportSize({ width, height: 900 });
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Homepage at ${width}px`);
+        const { width: imageWidth, height: imageHeight } = await portrait.boundingBox();
+        assert.equal(imageWidth, imageHeight);
+        assert.ok(imageWidth <= 560);
       }
 
       for (const [path, type] of [
@@ -154,6 +182,7 @@ test("root and prefixed production exports served as static files", async (suite
       await checkNativeMenu(page, site, basePath);
       await checkFont(browser, site);
       await checkResponsiveShell(browser, site, basePath);
+      await checkPortraitDelivery(browser, site);
       if (!basePath && process.env.PORTFOLIO_SCREENSHOTS === "1") {
         await captureScreenshots(browser, site);
       }
@@ -352,6 +381,75 @@ async function checkResponsiveShell(browser, site, basePath) {
       assert.equal(await menu.count(), 1);
     }
   } finally {
+    await page.close();
+  }
+}
+
+async function checkPortraitDelivery(browser, site) {
+  const page = await browser.newPage({
+    viewport: { width: 320, height: 640 },
+    javaScriptEnabled: false,
+    reducedMotion: "reduce",
+  });
+  const portraitUrl = site + "/images/stefan-penchev.png";
+  const release = Promise.withResolvers();
+  const imageRequests = [];
+  page.on("request", (request) => {
+    if (request.resourceType() === "image") imageRequests.push(request.url());
+  });
+
+  try {
+    await page.route(portraitUrl, async (route) => {
+      await release.promise;
+      await route.continue();
+    });
+    await Promise.all([
+      page.waitForRequest(portraitUrl),
+      page.goto(site + "/", { waitUntil: "domcontentloaded" }),
+    ]);
+    const hero = page.getByRole("region", { name: "Stefan Penchev", exact: true });
+    const portrait = hero.getByRole("img");
+    const heading = hero.getByRole("heading", { level: 1 });
+    const work = hero.getByRole("link", { name: "View my work" });
+    const contact = hero.getByRole("link", { name: "Get in touch" });
+
+    assert.equal(await portrait.evaluate((image) => image.complete), false);
+    const reserved = await portrait.boundingBox();
+    assert.ok(reserved.width > 0 && reserved.width === reserved.height);
+    assert.ok((await contact.boundingBox()).y < reserved.y);
+    assert.equal(await heading.isVisible(), true);
+    assert.equal(await work.isVisible(), true);
+    assert.equal(await contact.isVisible(), true);
+    await work.click();
+    await page.waitForURL(site + "/#selected-work", { waitUntil: "domcontentloaded" });
+
+    release.resolve();
+    await portrait.evaluate((image) => image.decode());
+    const loaded = await portrait.boundingBox();
+    assert.deepEqual([loaded.width, loaded.height], [reserved.width, reserved.height]);
+    assert.deepEqual(imageRequests, [portraitUrl]);
+
+    await page.unroute(portraitUrl);
+    await page.route(portraitUrl, (route) => route.abort());
+    await page.route("**/*.woff2", (route) => route.abort());
+    await page.goto(site + "/");
+    assert.equal(await portrait.evaluate((image) => image.naturalWidth), 0);
+    const originalSize = await heading.evaluate((element) => parseFloat(getComputedStyle(element).fontSize));
+    await page.evaluate(() => { document.documentElement.style.fontSize = "200%"; });
+    assert.ok(await heading.evaluate((element, before) => parseFloat(getComputedStyle(element).fontSize) > before, originalSize));
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+    const menuToggle = page.locator("summary");
+    await menuToggle.click();
+    const identityLink = page.getByRole("banner").getByRole("link", { name: "Stefan Penchev" });
+    const identityBox = await identityLink.boundingBox();
+    assert.ok((await menuToggle.boundingBox()).y >= identityBox.y + identityBox.height);
+    await menuToggle.click();
+    assert.equal(await heading.isVisible(), true);
+    assert.equal(await work.isVisible(), true);
+    await contact.click();
+    await page.waitForURL(site + "/#contact");
+  } finally {
+    release.resolve();
     await page.close();
   }
 }
