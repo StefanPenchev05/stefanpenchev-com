@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: system-ui, sans-serif;
+  --color-stone: #d9d7d2;
+  --color-paper: #f6f5f1;
+  --color-ink: #191b1f;
+  --color-muted: #50545b;
+  --color-accent: #2544c7;
+  --color-rule: #c6c4bf;
+}
+
+@layer base {
+  body {
+    @apply bg-paper font-sans text-ink text-base leading-relaxed sm:text-lg;
+    overflow-wrap: anywhere;
+  }
+
+  a {
+    @apply text-accent underline underline-offset-4;
+  }
+
+  :focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+  }
+
+  h1 {
+    @apply text-4xl font-semibold tracking-tight sm:text-5xl;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold tracking-tight sm:text-3xl;
+  }
+
+  h3 {
+    @apply text-xl font-semibold;
+  }
+
+  p {
+    max-width: 68ch;
+  }
+}
+
+@layer components {
+  .site-container {
+    width: min(100%, 72rem);
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 4rem);
+  }
+
+  .section {
+    @apply py-12 sm:py-16;
+  }
+
+  .skip-link {
+    @apply fixed top-2 left-2 z-10 -translate-y-24 bg-paper px-4 py-2 focus:translate-y-0;
+  }
+}
