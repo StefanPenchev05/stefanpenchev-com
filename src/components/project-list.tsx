@@ -15,9 +15,9 @@ export function ProjectList({ projects }: { projects: readonly Project[] }) {
                 {project.title}
               </Link>
             </h3>
-            <p className="mt-3 text-sm font-medium text-muted">{project.status} · {project.type}</p>
+            <p className="mt-3 metadata font-medium">{project.status} · {project.type}</p>
             <p className="mt-1">{project.summary}</p>
-            <p className="mt-1 text-sm text-muted">{project.role}</p>
+            <p className="mt-1 metadata">{project.role}</p>
           </article>
         </li>
       ))}

@@ -30,9 +30,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   return (
     <article className="site-container section space-y-8">
-      <Link href="/work/">All projects</Link>
+      <Link className="standalone-link" href="/work/">All projects</Link>
       <header className="space-y-3 bg-stone p-6 sm:p-8">
-        <p className="text-muted">{project.organization} · {project.type}</p>
+        <p className="metadata">{project.organization} · {project.type}</p>
         <h1>{project.title}</h1>
         <p>{project.summary}</p>
       </header>
@@ -61,9 +61,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         <Image key={path} src={publicAssetUrl(path)} alt={alt} width={width} height={height} className="h-auto" />
       ))}
       <div className="flex flex-wrap gap-x-6 gap-y-2 empty:hidden">
-        {project.externalLink && <a href={project.externalLink.href}>{project.externalLink.label}</a>}
+        {project.externalLink && <a className="standalone-link" href={project.externalLink.href}>{project.externalLink.label}</a>}
         {project.sourceVisibility === "public" && project.sourceLink && (
-          <a href={project.sourceLink.href}>{project.sourceLink.label}</a>
+          <a className="standalone-link" href={project.sourceLink.href}>{project.sourceLink.label}</a>
         )}
       </div>
     </article>

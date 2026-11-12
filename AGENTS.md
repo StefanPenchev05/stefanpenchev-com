@@ -1,6 +1,6 @@
 # Portfolio
 
-Read [README_START_HERE.md](README_START_HERE.md), the shared [portfolio specification](docs/portfolio-spec.md), [content facts](docs/content-facts.md), [implementation sequence](docs/implementation-plan.md), [source notes](docs/source-notes.md) and [progress](docs/progress.md) before making changes. Follow the requested stage. Treat the content facts and approved final CV as authoritative for public claims.
+Read [README_START_HERE.md](README_START_HERE.md), the shared [portfolio specification](docs/portfolio-spec.md), [content facts](docs/content-facts.md), [implementation sequence](docs/implementation-plan.md), [source notes](docs/source-notes.md) and [progress](docs/progress.md) before making changes. Use the [design system](docs/design-system.md) for shared UI changes. Follow the requested stage. Treat the content facts and approved final CV as authoritative for public claims.
 
 ## Local commands
 

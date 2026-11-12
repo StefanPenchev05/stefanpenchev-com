@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { readFile, readdir } from "node:fs/promises";
+import { mkdir, readFile, readdir } from "node:fs/promises";
 import { createServer } from "node:http";
 import { extname, resolve, sep } from "node:path";
 import { test } from "node:test";
@@ -16,7 +16,10 @@ const mimeTypes = {
   ".txt": "text/plain",
   ".png": "image/png",
   ".pdf": "application/pdf",
+  ".woff2": "font/woff2",
 };
+
+const linkedin = "https://www.linkedin.com/in/stefan-penchev-31b94a318/";
 
 const projectLinks = {
   "dto-recruitment-platform": [],
@@ -64,7 +67,7 @@ test("root and prefixed production exports served as static files", async (suite
       check.diagnostic(stdout.trim());
 
       const exportedFiles = await readdir(outputDirectory, { recursive: true });
-      assert.equal(exportedFiles.some((file) => /(^|\/)(docs|prompts)(\/|$)|\.md$/i.test(file)), false);
+      assert.equal(exportedFiles.some((file) => /(^|\/)(docs|prompts|tests|\.artifacts|\.agents)(\/|$)|\.md$/i.test(file)), false);
 
       const server = createStaticServer(basePath);
       await new Promise((listen) => server.listen(0, "127.0.0.1", listen));
@@ -82,7 +85,7 @@ test("root and prefixed production exports served as static files", async (suite
         }
       });
       page.on("requestfailed", (request) => {
-        if (["stylesheet", "image"].includes(request.resourceType())) {
+        if (["stylesheet", "image", "font"].includes(request.resourceType())) {
           failures.push(`${request.failure()?.errorText} ${request.url()}`);
         }
       });
@@ -100,7 +103,10 @@ test("root and prefixed production exports served as static files", async (suite
         assert.ok(links.includes(`${basePath}/#contact`), path);
         if (path.startsWith("/work/") && path !== "/work/") {
           const slug = path.split("/")[2];
-          assert.deepEqual(links.filter((href) => href.startsWith("https://")), projectLinks[slug], path);
+          assert.deepEqual(links.filter((href) => href.startsWith("https://")), [...projectLinks[slug], linkedin], path);
+          const mainLinks = await page.locator('main a[href^="https://"]').evaluateAll((anchors) =>
+            anchors.map((anchor) => anchor.getAttribute("href")));
+          assert.deepEqual(mainLinks, projectLinks[slug], path);
           assert.equal(await page.locator("main img").count(), 0, path);
         }
       }
@@ -110,6 +116,8 @@ test("root and prefixed production exports served as static files", async (suite
       await page.waitForURL(`${site}/#contact`);
       assert.equal(await page.getByRole("heading", { name: "Roles starting January 2027" }).count(), 1);
       assert.equal(await page.locator("#contact a[href^='tel:']").count(), 0);
+      assert.equal(await page.locator("#contact").count(), 1);
+      assert.equal(await page.getByRole("contentinfo").getByRole("link", { name: "LinkedIn" }).getAttribute("href"), linkedin);
 
       await page.goto(site + "/");
       assert.equal(await page.locator("body").evaluate((body) => getComputedStyle(body).backgroundColor), "rgb(246, 245, 241)");
@@ -143,6 +151,13 @@ test("root and prefixed production exports served as static files", async (suite
       assert.equal((await page.goto(site + "/docs/content-facts.md")).status(), 404);
       assert.deepEqual(failures, []);
 
+      await checkNativeMenu(page, site, basePath);
+      await checkFont(browser, site);
+      await checkResponsiveShell(browser, site, basePath);
+      if (!basePath && process.env.PORTFOLIO_SCREENSHOTS === "1") {
+        await captureScreenshots(browser, site);
+      }
+
       const enhancedPage = await browser.newPage();
       try {
         const scriptErrors = [];
@@ -164,3 +179,203 @@ test("root and prefixed production exports served as static files", async (suite
     });
   }
 });
+
+async function checkNativeMenu(page, site, basePath) {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(site + "/work/");
+  const toggle = page.locator("summary");
+  const menu = page.getByRole("navigation", { name: "Main navigation" });
+
+  assert.equal(await menu.count(), 0);
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Tab");
+  assert.equal(await toggle.evaluate((element) => element === document.activeElement), true);
+  await page.keyboard.press("Tab");
+  assert.equal(await page.evaluate(() => document.activeElement.textContent), "DTO Recruitment Platform");
+
+  await toggle.focus();
+  await page.keyboard.press("Space");
+  assert.equal(await menu.count(), 1);
+  assert.equal(await menu.getByRole("link", { name: "Work" }).getAttribute("aria-current"), "page");
+  assert.equal(await menu.getByRole("link", { name: "CV" }).getAttribute("href"), `${basePath}/files/stefan-penchev-cv.pdf`);
+  await page.keyboard.press("Enter");
+  assert.equal(await menu.count(), 0);
+  await page.keyboard.press("Enter");
+  await menu.getByRole("link", { name: "Contact" }).click();
+  await page.waitForURL(site + "/#contact");
+  assert.equal(await menu.count(), 0);
+  assert.equal(await page.locator("#contact").evaluate((element) => element === document.activeElement), true);
+}
+
+async function fontsUsedForHeading(page) {
+  await page.evaluate(() => document.fonts.ready);
+  const session = await page.context().newCDPSession(page);
+  try {
+    await session.send("DOM.enable");
+    await session.send("CSS.enable");
+    const { root } = await session.send("DOM.getDocument");
+    const { nodeId } = await session.send("DOM.querySelector", { nodeId: root.nodeId, selector: "main h1" });
+    return (await session.send("CSS.getPlatformFontsForNode", { nodeId })).fonts;
+  } finally {
+    await session.detach();
+  }
+}
+
+async function checkFont(browser, site) {
+  const page = await browser.newPage({ viewport: { width: 320, height: 800 } });
+  const requests = [];
+  page.on("request", (request) => {
+    if (["font", "stylesheet"].includes(request.resourceType())) requests.push(request.url());
+  });
+
+  try {
+    await page.goto(site + "/");
+    const renderedFonts = await fontsUsedForHeading(page);
+    assert.ok(renderedFonts.some(({ postScriptName, isCustomFont }) => isCustomFont && postScriptName.startsWith("Manrope-")));
+    assert.ok(requests.every((url) => url.startsWith(site + "/")), requests.join(", "));
+    const preload = page.locator('link[rel="preload"][as="font"]');
+    assert.equal(await preload.count(), 1);
+    const url = await preload.evaluate((link) => link.href);
+    assert.ok(url.startsWith(site + "/_next/static/"), url);
+    assert.ok(requests.includes(url), url);
+    const response = await fetch(url);
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("content-type"), "font/woff2");
+    assert.deepEqual(Buffer.from(await response.arrayBuffer()), await readFile("src/app/fonts/manrope-latin.woff2"));
+    const license = await fetch(site + "/licenses/manrope-ofl.txt");
+    assert.equal(license.status, 200);
+    assert.equal(await license.text(), await readFile("public/licenses/manrope-ofl.txt", "utf8"));
+
+    await page.route("**/*.woff2", (route) => route.abort());
+    await page.reload();
+    const fallbackFonts = await fontsUsedForHeading(page);
+    assert.ok(fallbackFonts.length > 0 && fallbackFonts.every(({ isCustomFont }) => !isCustomFont));
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+    assert.equal(await page.getByRole("heading", { name: "Stefan Penchev" }).isVisible(), true);
+  } finally {
+    await page.close();
+  }
+}
+
+async function checkResponsiveShell(browser, site, basePath) {
+  const page = await browser.newPage({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+    reducedMotion: "reduce",
+  });
+  const menu = page.getByRole("navigation", { name: "Main navigation" });
+  const toggle = page.locator("summary");
+  const work = menu.getByRole("link", { name: "Work" });
+  const about = menu.getByRole("link", { name: "About" });
+
+  try {
+    await page.goto(site + "/work/artaicare/");
+    assert.ok(await page.evaluate(() => matchMedia("(prefers-reduced-motion: reduce)").matches));
+    assert.equal(await menu.count(), 0);
+    assert.ok((await toggle.boundingBox()).height >= 44);
+    assert.equal(await toggle.innerText(), "Menu");
+    await toggle.tap();
+    assert.equal(await toggle.innerText(), "Close menu");
+    assert.equal(await menu.count(), 1);
+    await toggle.tap();
+    assert.equal(await toggle.innerText(), "Menu");
+    assert.equal(await menu.count(), 0);
+    await toggle.tap();
+    assert.equal(await work.getAttribute("aria-current"), null);
+    assert.equal(await work.getAttribute("data-current-section"), "true");
+    for (const link of await menu.getByRole("link").all()) {
+      assert.ok((await link.boundingBox()).height >= 44);
+    }
+    await about.focus();
+    await page.keyboard.press("Escape");
+    assert.equal(await menu.count(), 0);
+    assert.equal(await toggle.evaluate((element) => document.activeElement === element), true);
+    assert.equal(await toggle.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return element.matches(":focus-visible") &&
+        style.outlineStyle === "solid" && style.outlineWidth === "2px" && style.outlineColor === "rgb(37, 68, 199)";
+    }), true);
+
+    await toggle.tap();
+    await about.focus();
+    await page.setViewportSize({ width: 768, height: 900 });
+    await page.waitForFunction(() => document.activeElement?.matches(".desktop-nav a") &&
+      !document.querySelector("details").open);
+    assert.equal(await menu.count(), 1);
+    assert.equal(await about.evaluate((link) => document.activeElement === link), true);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.waitForFunction(() => document.activeElement?.matches("summary"));
+    assert.equal(await menu.count(), 0);
+
+    await toggle.tap();
+    await about.tap();
+    await page.waitForURL(site + "/about/");
+    assert.equal(await menu.count(), 0);
+    assert.equal(await toggle.evaluate((element) => document.activeElement === element), false);
+    await toggle.tap();
+    assert.equal(await about.getAttribute("aria-current"), "page");
+    await page.goBack();
+    await page.waitForURL(site + "/work/artaicare/");
+    await page.waitForFunction(() => !document.querySelector("details").open);
+
+    await toggle.tap();
+    await menu.getByRole("link", { name: "Contact" }).tap();
+    await page.waitForURL(site + "/#contact");
+    assert.equal(await menu.count(), 0);
+    assert.equal(await page.locator("#contact").count(), 1);
+    await toggle.tap();
+    assert.equal(await menu.getByRole("link", { name: "Contact" }).getAttribute("href"), `${basePath}/#contact`);
+    await menu.getByRole("link", { name: "Contact" }).tap();
+    assert.equal(await menu.count(), 0);
+
+    const role = page.getByRole("link", { name: "Discuss a role" });
+    const project = page.getByRole("link", { name: "Discuss a project" });
+    assert.equal(await role.getAttribute("href"), "mailto:penchev.stefan@icloud.com?subject=Employment%20enquiry");
+    assert.equal(await project.getAttribute("href"), "mailto:penchev.stefan@icloud.com?subject=Freelance%20project%20enquiry");
+    assert.equal(await role.getAttribute("class"), await project.getAttribute("class"));
+    assert.equal((await role.boundingBox()).height, (await project.boundingBox()).height);
+    await role.focus();
+    await page.keyboard.press("Tab");
+    assert.equal(await project.evaluate((link) => link.matches(":focus-visible") &&
+      getComputedStyle(link).outlineColor === "rgb(246, 245, 241)"), true);
+
+    for (const [width, path] of [
+      [320, "/"], [320, "/about/"], [320, "/work/dto-recruitment-platform/"], [360, "/work/"],
+      [390, "/work/dto-company-website/"], [703, "/about/"], [704, "/about/"], [768, "/about/"], [1024, "/work/"],
+      [1440, "/work/"], [1920, "/about/"],
+    ]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(site + path);
+      if (width < 704) await toggle.tap();
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${path} at ${width}px`);
+      assert.equal(await menu.count(), 1);
+    }
+  } finally {
+    await page.close();
+  }
+}
+
+async function captureScreenshots(browser, site) {
+  const dir = ".artifacts/part-2";
+  await mkdir(dir, { recursive: true });
+  const page = await browser.newPage();
+  try {
+    for (const [width, height] of [[390, 844], [1440, 1000]]) {
+      await page.setViewportSize({ width, height });
+      await page.goto(site + "/");
+      await page.screenshot({ path: `${dir}/home-${width}.png` });
+      await page.getByRole("contentinfo").screenshot({ path: `${dir}/footer-${width}.png` });
+    }
+    await page.goto(site + "/work/");
+    await page.screenshot({ path: `${dir}/work-1440.png` });
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(site + "/about/");
+    await page.screenshot({ path: `${dir}/about-390.png` });
+    await page.locator("summary").click();
+    await page.screenshot({ path: `${dir}/menu-open-390.png` });
+  } finally {
+    await page.close();
+  }
+}

@@ -10,8 +10,8 @@ export default function AboutPage() {
     <article className="site-container section space-y-12">
       <header className="space-y-3">
         <h1>About</h1>
-        <p>{identity.role} based in {identity.location}.</p>
-        <a href={publicAssetUrl(assets.cv)}>View CV</a>
+        <p className="lead">{identity.role} based in {identity.location}.</p>
+        <a className="standalone-link" href={publicAssetUrl(assets.cv)}>View CV</a>
       </header>
       <section className="space-y-5">
         <h2>My story</h2>
