@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useElementScrollRestoration } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { HeroScene } from "@/components/home/HeroScene";
 import { AboutScene, BuildBridge } from "@/components/home/AboutScene";
@@ -42,13 +42,18 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const restoredScroll = useElementScrollRestoration({ getElement: () => window })?.scrollY;
   useSceneController("obsidian");
   useEffect(() => {
+    // The router's early restoration can be clamped before the scene pins add their height.
+    // Reapply its saved position after the scene effects have measured the complete page.
     const id = window.location.hash.slice(1);
-    if (id) setTimeout(() => scrollToTarget(`#${id}`, true), 100);
-  }, []);
+    if (id) scrollToTarget(`#${id}`, true);
+    else if (restoredScroll !== undefined) scrollToTarget(restoredScroll, true);
+  }, [restoredScroll]);
   return (
-    <main>
+    // ScrollTrigger owns pin spacing; browser anchoring must not offset its restored scroll.
+    <main style={{ overflowAnchor: "none" }}>
       <ScrollProgress />
       <HeroScene />
       <AboutScene />

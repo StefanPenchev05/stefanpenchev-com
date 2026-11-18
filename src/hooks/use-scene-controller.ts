@@ -10,8 +10,18 @@ export function useSceneController(initial = "obsidian") {
         ScrollTrigger.create({
           trigger: el,
           start: "top 50%",
-          end: "bottom 50%",
-          onToggle: (s) => s.isActive && setScene(el.dataset["scene"]!),
+          // The chapter stays on screen for its pin distance as well as its height.
+          end: () => {
+            const pinned = ScrollTrigger.getAll().find(
+              (trigger) => trigger.trigger === el && trigger.pin,
+            );
+            return pinned ? pinned.end + el.offsetHeight - window.innerHeight * 0.5 : "bottom 50%";
+          },
+          onEnter: () => setScene(el.dataset["scene"]!),
+          onEnterBack: () => setScene(el.dataset["scene"]!),
+          onRefresh: (trigger) => {
+            if (trigger.isActive) setScene(el.dataset["scene"]!);
+          },
         }),
     );
     ScrollTrigger.refresh();

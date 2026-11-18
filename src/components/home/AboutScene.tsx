@@ -1,6 +1,8 @@
 import { useRef } from "react";
 import { DESKTOP, MOTION, gsap, useIsoLayoutEffect } from "@/lib/gsap";
 
+import { fitTextToContainer } from "@/lib/fit-text";
+
 const PHRASES = ["I question.", "I understand.", "I engineer.", "I build."];
 const BIO = [
   "I'm Stefan Penchev, a Computer Science student and software developer drawn to full-stack engineering, backend architecture and intelligent applications.",
@@ -15,11 +17,12 @@ export function AboutScene() {
   useIsoLayoutEffect(() => {
     const el = root.current;
     if (!el) return;
+    const stopFitting = fitTextToContainer(el, ".about-phrase");
     const mm = gsap.matchMedia(el);
     mm.add(`${MOTION} and ${DESKTOP}`, () => {
       const phrases = gsap.utils.toArray<HTMLElement>(".about-phrase");
       const bios = gsap.utils.toArray<HTMLElement>(".about-bio");
-      gsap.set(phrases.slice(1), { yPercent: 110 });
+      gsap.set(phrases.slice(1), { y: 0, yPercent: 110 });
       gsap.set(bios, { opacity: 0.12, y: 20 });
       const tl = gsap.timeline({
         defaults: { ease: "power2.inOut" },
@@ -40,10 +43,10 @@ export function AboutScene() {
       phrases.forEach((p, i) => {
         if (i === 0) return;
         const at = i * 1;
-        tl.to(phrases[i - 1]!, { yPercent: -110, rotate: -3, duration: 0.6 }, at).fromTo(
+        tl.to(phrases[i - 1]!, { y: 0, yPercent: -110, rotate: -3, duration: 0.6 }, at).fromTo(
           p,
-          { yPercent: 110, rotate: 3 },
-          { yPercent: 0, rotate: 0, duration: 0.6 },
+          { y: 0, yPercent: 110, rotate: 3 },
+          { y: 0, yPercent: 0, rotate: 0, duration: 0.6 },
           at,
         );
         if (bios[i]) tl.to(bios[i]!, { opacity: 1, y: 0, duration: 0.5 }, at + 0.2);
@@ -67,7 +70,10 @@ export function AboutScene() {
         }),
       );
     });
-    return () => mm.revert();
+    return () => {
+      stopFitting();
+      mm.revert();
+    };
   }, []);
 
   return (
@@ -80,7 +86,7 @@ export function AboutScene() {
       className="relative overflow-hidden text-obsidian lg:motion-safe:h-[100svh]"
     >
       <div className="grid gap-12 px-5 py-28 md:px-10 lg:h-full lg:grid-cols-12 lg:gap-8 lg:py-24">
-        <div className="flex flex-col lg:col-span-7">
+        <div className="flex min-w-0 flex-col lg:col-span-7 lg:motion-safe:max-h-[calc(100svh-12rem)]">
           <p className="font-mono text-xs uppercase tracking-[0.25em] text-slate">
             01 / The mindset
           </p>
@@ -98,14 +104,14 @@ export function AboutScene() {
           </h2>
 
           <div
-            className="relative mt-14 lg:mt-auto lg:motion-safe:h-[clamp(5rem,10vw,10rem)] lg:motion-safe:overflow-hidden"
+            className="about-phrase-mask relative mt-14 lg:mt-auto lg:motion-safe:overflow-hidden"
             aria-label={PHRASES.join(", ")}
           >
             {PHRASES.map((p, i) => (
               <p
                 key={p}
                 aria-hidden
-                className={`about-phrase origin-left font-display text-[clamp(3rem,7.4vw,8rem)] font-extrabold uppercase leading-[0.95] lg:whitespace-nowrap tracking-[-0.04em] lg:motion-safe:absolute lg:inset-x-0 lg:top-0 ${
+                className={`about-phrase origin-left font-display text-[clamp(3rem,7.4vw,8rem)] font-extrabold uppercase leading-[0.95] lg:whitespace-nowrap tracking-[-0.04em] lg:motion-safe:absolute lg:motion-safe:inset-0 lg:motion-safe:pt-[0.18em] lg:motion-safe:pl-[0.05em] ${
                   i === PHRASES.length - 1 ? "text-coral" : ""
                 } ${i === 2 ? "text-outline" : ""}`}
               >
@@ -148,7 +154,10 @@ export function AboutScene() {
 function Sculpture() {
   const pts = Array.from({ length: 6 }, (_, i): [number, number] => {
     const a = (i / 6) * Math.PI * 2;
-    return [150 + Math.cos(a) * 110, 150 + Math.sin(a) * 110];
+    return [
+      Math.round((150 + Math.cos(a) * 110) * 1000) / 1000,
+      Math.round((150 + Math.sin(a) * 110) * 1000) / 1000,
+    ];
   });
   return (
     <svg viewBox="0 0 300 300" className="h-full w-full overflow-visible">
@@ -215,16 +224,36 @@ export function BuildBridge() {
     if (!el) return;
     const mm = gsap.matchMedia(el);
     mm.add(MOTION, () => {
+      const word = el.querySelector<HTMLElement>(".bridge-word")!;
+      const readableScale = () =>
+        Math.min(1, (el.clientWidth - Math.min(80, el.clientWidth * 0.1)) / word.offsetWidth);
+      const centeredX = () => (el.clientWidth - word.offsetWidth) / 2;
       const tl = gsap.timeline({
         defaults: { ease: "none" },
-        scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true },
+        scrollTrigger: {
+          trigger: el,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
       });
-      tl.fromTo(".bridge-word", { xPercent: 30, scale: 0.9 }, { xPercent: -60, scale: 1.6 }).fromTo(
-        ".bridge-sub",
-        { xPercent: -20 },
-        { xPercent: 20 },
-        0,
-      );
+      tl.fromTo(
+        word,
+        {
+          x: () => el.clientWidth * 0.3,
+          scale: () => readableScale() * 0.9,
+          transformOrigin: "50% 50%",
+        },
+        { x: centeredX, scale: readableScale, duration: 0.4 },
+      )
+        .to(word, { x: centeredX, scale: readableScale, duration: 0.2 })
+        .to(word, {
+          x: () => -word.offsetWidth * 0.6,
+          scale: () => readableScale() * 1.6,
+          duration: 0.4,
+        })
+        .fromTo(".bridge-sub", { xPercent: -20 }, { xPercent: 20, duration: 1 }, 0);
     });
     return () => mm.revert();
   }, []);
@@ -235,7 +264,7 @@ export function BuildBridge() {
       className="relative overflow-hidden py-20 text-ivory md:py-32"
       aria-hidden
     >
-      <div className="bridge-word whitespace-nowrap font-display text-[clamp(8rem,32vw,34rem)] font-extrabold uppercase leading-[0.8] tracking-[-0.05em]">
+      <div className="bridge-word w-max whitespace-nowrap font-display text-[clamp(8rem,32vw,34rem)] font-extrabold uppercase leading-[0.8] tracking-[-0.05em]">
         Build<span className="text-lime">→</span>
       </div>
       <div className="bridge-sub mt-6 whitespace-nowrap font-mono text-xs uppercase tracking-[0.4em] text-slate">

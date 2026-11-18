@@ -312,3 +312,15 @@ html.has-cursor textarea {
     opacity: 1;
   }
 }
+
+/* Local reveal geometry: include the font's ascenders/descenders in each mask. */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .about-phrase-mask {
+    font-size: clamp(3rem, 7.4vw, 8rem);
+    height: max(clamp(5rem, 10vw, 10rem), 1.4em);
+  }
+}
+.cap-title-mask {
+  font-size: clamp(3.5rem, 7.5vw, 8rem);
+  height: max(clamp(4rem, 8vw, 8rem), 1.4em);
+}

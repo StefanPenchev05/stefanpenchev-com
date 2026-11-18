@@ -13,6 +13,9 @@ export function HeroScene() {
     mm.add({ motion: MOTION, desktop: DESKTOP }, (ctx) => {
       const { motion, desktop } = ctx.conditions as { motion: boolean; desktop: boolean };
       if (!motion) return;
+      const frame = el.querySelector<HTMLElement>(
+        desktop ? '[data-hero-frame="desktop"]' : '[data-hero-frame="mobile"]',
+      )!;
       const intro = gsap.timeline({ defaults: { ease: "expo.out" } });
       intro
         .fromTo(
@@ -21,10 +24,18 @@ export function HeroScene() {
           { yPercent: -100, duration: 1.1, ease: "expo.inOut" },
         )
         .from(".hero-line-inner", { yPercent: 110, duration: 1.2, stagger: 0.09 }, "-=0.45")
-        .from(".hero-frame", { clipPath: "inset(100% 0% 0% 0%)", duration: 1.4 }, "<0.1")
-        .from(".hero-img", { scale: 1.35, duration: 1.8 }, "<")
+        .from(
+          frame.querySelector(".hero-reveal"),
+          { clipPath: "inset(100% 0% 0% 0%)", duration: 1.4 },
+          "<0.1",
+        )
+        .from(frame.querySelector(".hero-image-arrival"), { scale: 1.35, duration: 1.8 }, "<")
         .from(".hero-fade", { opacity: 0, y: 16, stagger: 0.06, duration: 0.9 }, "-=1.2")
-        .from(".hero-deco", { scale: 0, rotate: -90, opacity: 0, duration: 1, stagger: 0.1 }, "<");
+        .from(
+          ".hero-deco-arrival",
+          { scale: 0, rotate: -90, opacity: 0, duration: 1, stagger: 0.1 },
+          "<",
+        );
 
       if (!desktop) {
         gsap.to(".hero-img", {
@@ -43,14 +54,26 @@ export function HeroScene() {
           scrub: 1,
           pin: true,
           anticipatePin: 1,
+          invalidateOnRefresh: true,
         },
       });
-      tl.to(".hero-first", { xPercent: -55, opacity: 0.12 }, 0)
-        .to(".hero-last", { xPercent: 60, opacity: 0.12 }, 0)
+      tl.set(
+        frame,
+        {
+          right: "5vw",
+          xPercent: 0,
+          top: "13vh",
+          width: () => Math.min(window.innerWidth * 0.32, 540),
+          height: "74vh",
+        },
+        0,
+      )
+        .to(".hero-first", { xPercent: -55, opacity: 0 }, 0)
+        .to(".hero-last", { xPercent: 60, opacity: 0 }, 0)
         .to(".hero-aside", { y: -70, opacity: 0, stagger: 0.03 }, 0)
         .to(".hero-deco", { rotate: 180, scale: 1.6, opacity: 0 }, 0)
         .to(
-          ".hero-frame",
+          frame,
           {
             right: "50%",
             xPercent: 50,
@@ -58,17 +81,28 @@ export function HeroScene() {
             width: "88vw",
             height: "84vh",
             ease: "power2.inOut",
+            immediateRender: false,
           },
           0.05,
         )
-        .to(".hero-img", { scale: 1.02, ease: "power2.inOut" }, 0.05)
+        .fromTo(
+          frame.querySelector(".hero-img"),
+          { scale: 1 },
+          { scale: 1.02, ease: "power2.inOut", immediateRender: false },
+          0.05,
+        )
         .fromTo(
           ".hero-s1 .mask-inner",
           { y: 0, yPercent: 105 },
           { yPercent: 0, stagger: 0.06 },
           0.55,
         )
-        .to(".hero-frame", { clipPath: "inset(22% 32% 22% 32%)", ease: "power2.inOut" }, 1.05)
+        .fromTo(
+          frame,
+          { clipPath: "inset(0% 0% 0% 0%)" },
+          { clipPath: "inset(22% 32% 22% 32%)", ease: "power2.inOut", immediateRender: false },
+          1.05,
+        )
         .to(".hero-s1 .mask-inner", { yPercent: -105, stagger: 0.04 }, 1.55)
         .fromTo(".hero-wipe", { y: 0, yPercent: 100 }, { yPercent: 0, ease: "power2.inOut" }, 1.5)
         .fromTo(
@@ -94,12 +128,16 @@ export function HeroScene() {
     >
       {/* Mobile / tablet composition */}
       <div className="relative z-10 flex min-h-[100svh] flex-col px-5 pb-10 pt-24 md:px-10 lg:pointer-events-none lg:absolute lg:inset-0 lg:pb-12 lg:pt-28">
-        <div className="hero-aside hero-fade flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.25em] text-slate lg:max-w-[52vw]">
-          <span>Portfolio / 2026</span>
-          <span className="hidden sm:inline">[ Engineering / Software / Curiosity ]</span>
+        <div className="hero-aside lg:max-w-[52vw]">
+          <div className="hero-fade flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.25em] text-slate">
+            <span>Portfolio / 2026</span>
+            <span className="hidden sm:inline">[ Engineering / Software / Curiosity ]</span>
+          </div>
         </div>
-
-        <div className="hero-frame relative mx-auto mt-8 aspect-[4/5] w-full max-w-[22rem] overflow-hidden lg:hidden">
+        <div
+          data-hero-frame="mobile"
+          className="hero-frame relative mx-auto mt-8 aspect-[4/5] w-full max-w-[22rem] overflow-hidden lg:hidden"
+        >
           <PortraitFrame mobile />
         </div>
 
@@ -125,28 +163,35 @@ export function HeroScene() {
         </h1>
 
         <div className="mt-6 grid gap-6 lg:max-w-[56vw] lg:grid-cols-[auto_1fr] lg:items-end lg:gap-12">
-          <div className="hero-aside hero-fade">
-            <p className="font-mono text-xs uppercase tracking-[0.25em] text-lime">
-              Full-Stack / Backend Developer
-            </p>
-            <p className="mt-2 max-w-xs text-lg leading-snug text-ivory/90">{profile.tagline}</p>
-            <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate">{profile.intro}</p>
+          <div className="hero-aside">
+            <div className="hero-fade">
+              <p className="font-mono text-xs uppercase tracking-[0.25em] text-lime">
+                Full-Stack / Backend Developer
+              </p>
+              <p className="mt-2 max-w-xs text-lg leading-snug text-ivory/90">{profile.tagline}</p>
+              <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate">{profile.intro}</p>
+            </div>
           </div>
-          <p className="hero-aside hero-fade font-mono text-[10px] uppercase tracking-[0.25em] text-slate">
-            {profile.location}
-          </p>
+          <div className="hero-aside">
+            <p className="hero-fade font-mono text-[10px] uppercase tracking-[0.25em] text-slate">
+              {profile.location}
+            </p>
+          </div>
         </div>
 
-        <div className="hero-aside hero-fade mt-10 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.25em] text-slate lg:absolute lg:bottom-12 lg:right-10 lg:mt-0">
-          <span className="nudge inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate/50">
-            <ArrowDown className="h-3.5 w-3.5" />
-          </span>
-          Scroll to begin
+        <div className="hero-aside mt-10 lg:absolute lg:bottom-12 lg:right-10 lg:mt-0">
+          <div className="hero-fade flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.25em] text-slate">
+            <span className="nudge inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate/50">
+              <ArrowDown className="h-3.5 w-3.5" />
+            </span>
+            Scroll to begin
+          </div>
         </div>
       </div>
 
       {/* Desktop cinematic frame */}
       <div
+        data-hero-frame="desktop"
         className="hero-frame absolute right-[5vw] top-[13vh] z-0 hidden h-[74vh] w-[min(32vw,540px)] overflow-hidden lg:block"
         style={{ clipPath: "inset(0% 0% 0% 0%)" }}
       >
@@ -158,13 +203,17 @@ export function HeroScene() {
         className="hero-deco pointer-events-none absolute right-[36vw] top-[18vh] z-10 hidden h-20 w-20 text-lime lg:block"
         viewBox="0 0 80 80"
       >
-        <circle cx="40" cy="40" r="30" fill="none" stroke="currentColor" strokeDasharray="3 5" />
-        <path d="M40 0v80M0 40h80" stroke="currentColor" strokeWidth="1" />
+        <g className="hero-deco-arrival" style={{ transformOrigin: "40px 40px" }}>
+          <circle cx="40" cy="40" r="30" fill="none" stroke="currentColor" strokeDasharray="3 5" />
+          <path d="M40 0v80M0 40h80" stroke="currentColor" strokeWidth="1" />
+        </g>
       </svg>
       <div
         aria-hidden
-        className="hero-deco absolute bottom-[18vh] right-[3vw] z-10 hidden h-3 w-3 rotate-45 bg-coral lg:block"
-      />
+        className="hero-deco absolute bottom-[18vh] right-[3vw] z-10 hidden h-3 w-3 rotate-45 lg:block"
+      >
+        <span className="hero-deco-arrival block h-full w-full bg-coral" />
+      </div>
 
       <div
         aria-hidden
@@ -217,15 +266,17 @@ export function HeroScene() {
 
 function PortraitFrame(_: { mobile?: boolean }) {
   return (
-    <figure className="relative h-full w-full overflow-hidden bg-obsidian">
-      <img
-        src={profile.portrait}
-        alt="Stefan Penchev"
-        width={800}
-        height={800}
-        fetchPriority="high"
-        className="hero-img absolute inset-0 h-full w-full object-contain object-bottom"
-      />
+    <figure className="hero-reveal relative h-full w-full overflow-hidden bg-obsidian">
+      <div className="hero-image-arrival absolute inset-0">
+        <img
+          src={profile.portrait}
+          alt="Stefan Penchev"
+          width={800}
+          height={800}
+          fetchPriority="high"
+          className="hero-img absolute inset-0 h-full w-full object-contain object-bottom"
+        />
+      </div>
       <span aria-hidden className="absolute left-2 top-2 h-4 w-4 border-l border-t border-lime" />
       <span
         aria-hidden

@@ -2,6 +2,8 @@ import { useRef } from "react";
 import { skillGroups } from "@/data/skills";
 import { DESKTOP, MOTION, gsap, useIsoLayoutEffect } from "@/lib/gsap";
 
+import { fitTextToContainer } from "@/lib/fit-text";
+
 type Box = [number, number, number, number, string]; // left, top, width, height (%), radius
 
 const LAYOUTS: Box[][] = [
@@ -75,6 +77,7 @@ export function CapabilitiesScene() {
   useIsoLayoutEffect(() => {
     const el = root.current;
     if (!el) return;
+    const stopFitting = fitTextToContainer(el, ".cap-title, .cap-static-title");
     const mm = gsap.matchMedia(el);
     mm.add(`${MOTION} and ${DESKTOP}`, () => {
       const pieces = gsap.utils.toArray<HTMLElement>(".cap-piece");
@@ -160,7 +163,10 @@ export function CapabilitiesScene() {
       window.addEventListener("pointermove", move);
       return () => window.removeEventListener("pointermove", move);
     });
-    return () => mm.revert();
+    return () => {
+      stopFitting();
+      mm.revert();
+    };
   }, []);
 
   return (
@@ -189,7 +195,7 @@ export function CapabilitiesScene() {
 
       {/* Desktop pinned system */}
       <div className="hidden h-full grid-cols-12 items-center gap-8 px-10 pt-40 lg:grid lg:motion-reduce:hidden">
-        <div className="col-span-5">
+        <div className="min-w-0 col-span-5">
           <div className="flex items-center gap-3 font-mono text-xs text-slate">
             <span className="text-lime">
               0<span className="cap-count">1</span>
@@ -197,11 +203,11 @@ export function CapabilitiesScene() {
             / 04
             <span className="h-px w-16 bg-slate/40" />
           </div>
-          <div className="relative mt-4 h-[clamp(4rem,8vw,8rem)] overflow-hidden">
+          <div className="cap-title-mask relative mt-4 overflow-hidden">
             {STATES.map((s) => (
               <h3
                 key={s.key}
-                className="cap-title absolute inset-0 font-display text-[clamp(3.5rem,7.5vw,8rem)] font-extrabold uppercase leading-none tracking-[-0.04em]"
+                className="cap-title absolute inset-0 pt-[0.15em] font-display text-[clamp(3.5rem,7.5vw,8rem)] font-extrabold uppercase leading-none tracking-[-0.04em]"
               >
                 {s.title}
               </h3>
@@ -287,7 +293,7 @@ export function CapabilitiesScene() {
         {STATES.map((s, i) => (
           <article key={s.key} className="border-t border-slate/30 pt-6">
             <p className="font-mono text-xs text-lime">0{i + 1} / 04</p>
-            <h3 className="mt-2 font-display text-5xl font-extrabold uppercase tracking-[-0.04em]">
+            <h3 className="cap-static-title mt-2 font-display text-5xl font-extrabold uppercase tracking-[-0.04em]">
               {s.title}
             </h3>
             <p className="mt-3 text-ivory/85">{s.line}</p>

@@ -8,6 +8,8 @@ export function setLenis(l: Lenis | null) {
 
 export function scrollToTarget(target: string | number | HTMLElement, immediate = false) {
   if (instance) {
+    // Pin spacing may have changed before Lenis's ResizeObserver has delivered it.
+    if (immediate) instance.resize();
     instance.scrollTo(target, { immediate, duration: 1.4 });
     return;
   }
