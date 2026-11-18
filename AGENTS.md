@@ -2,7 +2,7 @@
 
 Use Node.js 24 and npm with package-lock.json. Run npm run typecheck, npm run lint, npm test and npm run build.
 
-If `node_modules` is a symlink to local dependency storage, follow the linked-install instructions in README.md when reinstalling. Running `npm ci` in this synced project directory replaces that symlink and can reintroduce cloud-placeholder startup hangs.
+The active project is `~/Projects/portfolio_4`; its former Documents path is a compatibility symlink. Use the local project directory for development and standard `npm ci`. Keep source files and dependencies outside cloud-synced storage, which previously offloaded them and caused filesystem timeouts during startup.
 
 Public claims must follow docs/content-facts.md and the approved CV at public/files/stefan-penchev-cv.pdf. Keep unconfirmed projects and links outside the public app until approved. Do not initialise Git or deploy without an explicit request.
 
