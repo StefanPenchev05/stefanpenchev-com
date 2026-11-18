@@ -130,7 +130,9 @@ with sync_playwright() as p:
                         (0.4375, 2),
                         (0.68, 3),
                         (0.92, 4),
+                        (0.68, 3),
                         (0.4375, 2),
+                        (0.2, 1),
                     ]:
                         seek("#about", fraction)
                         fits(f".about-phrase:nth-child({index})")
