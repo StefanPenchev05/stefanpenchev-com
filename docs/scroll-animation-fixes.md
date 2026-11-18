@@ -49,6 +49,9 @@ Checks use Node.js 24.15.0 and a clean `npm ci` installation of the unchanged pa
 - `npm run build`: passed.
 - Production smoke check: hero exit/return, About and Intelligence bounds, and a restored reload inside Toolkit passed with no console errors.
 - Chrome 157.0.8103.80 and Playwright WebKit 27.2 are the automated browser engines used.
+- Both engines passed all requested widths: 360, 390, 768, 1024, 1440, 1536 and 1920px, with five hero return cycles at each width (70 cycles total).
+- Both engines passed the two full-page round trips, wheel/navigation checks, reloads in Hero/About/Toolkit, desktop and mobile breakpoint resizing, three case-study mount/unmount cycles, delayed-font fitting, early scrolling and reduced-motion checks. No console errors were recorded.
+- An additional reverse pass measured every About phrase at each desktop width in both engines.
 - Actual Safari automation was unavailable because Safari's “Allow remote automation” setting is disabled. WebKit results are not claimed as an actual Safari run.
 - Firefox was installed, but its process failed to start with “Could not find profile folder,” including an explicit-profile retry. Firefox is not claimed as verified.
 

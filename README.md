@@ -11,6 +11,17 @@ npm ci
 npm run dev
 ```
 
+On this Mac, the project is inside cloud-synced Documents. Its `node_modules` is linked to `~/.local/share/portfolio_4/dependencies/node_modules` so dependencies remain local instead of becoming cloud placeholders. Run `npm run dev` from this project as usual.
+
+To reinstall locked dependencies in this linked setup, keep the installation outside Documents:
+
+```sh
+cp package.json package-lock.json "$HOME/.local/share/portfolio_4/dependencies/"
+(cd "$HOME/.local/share/portfolio_4/dependencies" && npm ci)
+```
+
+A direct `npm ci` in the project replaces the dependency symlink, so use the commands above while this workspace remains in the synced folder. Ordinary checkouts outside cloud storage can use the standard installation command.
+
 ## Checks and build
 
 ```sh
