@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { ArrowDown } from "lucide-react";
 import { profile } from "@/data/profile";
+import { sitePath } from "@/lib/site";
 import { DESKTOP, MOTION, gsap, useIsoLayoutEffect } from "@/lib/gsap";
 
 export function HeroScene() {
@@ -269,7 +270,7 @@ function PortraitFrame(_: { mobile?: boolean }) {
     <figure className="hero-reveal relative h-full w-full overflow-hidden bg-obsidian">
       <div className="hero-image-arrival absolute inset-0">
         <img
-          src={profile.portrait}
+          src={sitePath(profile.portrait)}
           alt="Stefan Penchev"
           width={800}
           height={800}

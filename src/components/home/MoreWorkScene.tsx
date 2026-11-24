@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { sitePath } from "@/lib/site";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import { moreProjects } from "@/data/projects";
@@ -77,14 +78,14 @@ export function MoreWorkScene() {
               className="mw-rule absolute inset-x-0 top-0 h-px origin-left bg-slate/40"
             />
             <a
-              href={`/work/${p.slug}`}
+              href={sitePath(`/work/${p.slug}/`)}
               data-cursor="OPEN"
               onPointerEnter={() => setActive(i)}
               onFocus={() => setActive(i)}
               onClick={(e) => {
                 if (e.metaKey || e.ctrlKey) return;
                 e.preventDefault();
-                go(() => navigate({ to: "/work/$slug", params: { slug: p.slug } }), p.name);
+                go(() => navigate({ to: "/work/$slug/", params: { slug: p.slug } }), p.name);
               }}
               className="group grid items-baseline gap-2 py-6 transition-colors md:grid-cols-[4rem_1fr_auto] md:gap-8"
             >

@@ -1,8 +1,8 @@
 """Real-browser regression checks for the five scroll-animation bugs.
 
 Start Vite, install Python Playwright, then run:
-  PORTFOLIO_URL=http://127.0.0.1:5173 python tests/scroll_animations.py chrome
-  PORTFOLIO_URL=http://127.0.0.1:5173 python tests/scroll_animations.py webkit
+  PORTFOLIO_URL=http://127.0.0.1:5173/stefanpenchev-com python tests/scroll_animations.py chrome
+  PORTFOLIO_URL=http://127.0.0.1:5173/stefanpenchev-com python tests/scroll_animations.py webkit
 Optional second argument: widths, lifecycle, or fonts (default: all).
 These checks use the development module exports, never production debug hooks.
 """
@@ -10,10 +10,14 @@ These checks use the development module exports, never production debug hooks.
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 import json, sys, traceback, os
+from urllib.parse import urlparse
 
 out = Path(os.environ.get("PORTFOLIO_ARTIFACTS", ".artifacts/scroll-fixes"))
 out.mkdir(parents=True, exist_ok=True)
-url = os.environ.get("PORTFOLIO_URL", "http://127.0.0.1:5173").rstrip("/")
+url = os.environ.get("PORTFOLIO_URL", "http://127.0.0.1:5173/stefanpenchev-com").rstrip(
+    "/"
+)
+base_path = urlparse(url).path.rstrip("/")
 engine = sys.argv[1] if len(sys.argv) > 1 else "chrome"
 mode = sys.argv[2] if len(sys.argv) > 2 else "all"
 assert mode in ["all", "widths", "lifecycle", "fonts"]
@@ -40,7 +44,7 @@ with sync_playwright() as p:
         page.goto(url + "/", wait_until="networkidle")
         page.evaluate("document.fonts.ready")
         page.evaluate(
-            """async()=>{const {gsap,ScrollTrigger}=await import('/src/lib/gsap.ts');const {scrollToTarget}=await import('/src/lib/scroll.ts');window.probe={gsap,ScrollTrigger,scrollToTarget};}"""
+            """async()=>{const base=new URL(document.querySelector('nav a[data-cursor=HOME]').href).pathname;const {gsap,ScrollTrigger}=await import(base+'src/lib/gsap.ts');const {scrollToTarget}=await import(base+'src/lib/scroll.ts');window.probe={gsap,ScrollTrigger,scrollToTarget};}"""
         )
         page.wait_for_function(
             'getComputedStyle(document.querySelector(".hero-fade")).opacity==="1"'
@@ -218,7 +222,7 @@ with sync_playwright() as p:
             page.wait_for_function("scrollY < 1")
             seek("#top", 0)
             restored(initial)
-            page.locator('nav a[href="/#contact"]').click()
+            page.locator(f'nav a[href="{base_path}/#contact"]').click()
             page.wait_for_function(
                 'document.querySelector("#contact").getBoundingClientRect().top < innerHeight * 0.5'
             )
@@ -250,7 +254,7 @@ with sync_playwright() as p:
                 page.reload(wait_until="networkidle")
                 page.evaluate("document.fonts.ready")
                 page.evaluate(
-                    "async()=>{const {gsap,ScrollTrigger}=await import('/src/lib/gsap.ts');const {scrollToTarget}=await import('/src/lib/scroll.ts');window.probe={gsap,ScrollTrigger,scrollToTarget};}"
+                    "async()=>{const base=new URL(document.querySelector('nav a[data-cursor=HOME]').href).pathname;const {gsap,ScrollTrigger}=await import(base+'src/lib/gsap.ts');const {scrollToTarget}=await import(base+'src/lib/scroll.ts');window.probe={gsap,ScrollTrigger,scrollToTarget};}"
                 )
                 page.wait_for_function(
                     'getComputedStyle(document.querySelector(".hero-fade")).opacity==="1"'
@@ -313,7 +317,9 @@ with sync_playwright() as p:
             # Real case-study links unmount all home pins; remounting must not accumulate them.
             seek("#top", 0)
             for cycle in range(3):
-                page.locator('a[href^="/work/"]').first.evaluate("e=>e.click()")
+                page.locator(f'a[href^="{base_path}/work/"]').first.evaluate(
+                    "e=>e.click()"
+                )
                 page.wait_for_url("**/work/**")
                 page.wait_for_function(
                     '!document.querySelector("#top") && document.querySelectorAll(".pin-spacer").length===0'
@@ -361,7 +367,7 @@ with sync_playwright() as p:
                 'document.fonts.status==="loading" && document.querySelectorAll(".pin-spacer").length===4'
             )
             page.evaluate(
-                "async()=>{const {gsap,ScrollTrigger}=await import('/src/lib/gsap.ts');const {scrollToTarget}=await import('/src/lib/scroll.ts');window.probe={gsap,ScrollTrigger,scrollToTarget};}"
+                "async()=>{const base=new URL(document.querySelector('nav a[data-cursor=HOME]').href).pathname;const {gsap,ScrollTrigger}=await import(base+'src/lib/gsap.ts');const {scrollToTarget}=await import(base+'src/lib/scroll.ts');window.probe={gsap,ScrollTrigger,scrollToTarget};}"
             )
             # Start the scrub before the entrance finishes, while web fonts are held.
             seek("#top", 0.46)

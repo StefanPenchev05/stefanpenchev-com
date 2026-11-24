@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { sitePath } from "@/lib/site";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import { featuredProjects, themes, type Project } from "@/data/projects";
@@ -197,7 +198,7 @@ function ProjectPanel({ project }: { project: Project }) {
   const open = (e: React.MouseEvent) => {
     if (e.metaKey || e.ctrlKey) return;
     e.preventDefault();
-    go(() => navigate({ to: "/work/$slug", params: { slug: project.slug } }), project.name);
+    go(() => navigate({ to: "/work/$slug/", params: { slug: project.slug } }), project.name);
   };
 
   return (
@@ -215,7 +216,7 @@ function ProjectPanel({ project }: { project: Project }) {
       </div>
 
       <a
-        href={`/work/${project.slug}`}
+        href={sitePath(`/work/${project.slug}/`)}
         onClick={open}
         data-cursor="VIEW"
         className="group relative block [perspective:1000px] lg:motion-safe:max-w-[66vw]"
@@ -251,7 +252,7 @@ function ProjectPanel({ project }: { project: Project }) {
           {project.status && <span className="mt-2 block font-mono text-xs">{project.status}</span>}
         </p>
         <a
-          href={`/work/${project.slug}`}
+          href={sitePath(`/work/${project.slug}/`)}
           onClick={open}
           className="work-meta link-line inline-flex items-center gap-1 font-mono text-xs uppercase tracking-[0.2em]"
         >

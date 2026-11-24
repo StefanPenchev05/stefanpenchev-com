@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { Link, useMatch, useNavigate } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { scrollToTarget } from "@/lib/scroll";
 import { useTransitionGo } from "./PageTransition";
 
 import { profile } from "@/data/profile";
+import { sitePath } from "@/lib/site";
 
 const LINKS = [
   { id: "work", label: "Work" },
@@ -16,10 +17,9 @@ const LINKS = [
 export function Navigation() {
   const [open, setOpen] = useState(false);
   const [compact, setCompact] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
   const go = useTransitionGo();
-  const onHome = location.pathname === "/";
+  const onHome = Boolean(useMatch({ from: "/", shouldThrow: false }));
 
   useEffect(() => {
     const onScroll = () => setCompact(window.scrollY > 80);
@@ -66,13 +66,18 @@ export function Navigation() {
           <ul className="hidden items-center gap-8 font-mono text-xs uppercase tracking-[0.18em] md:flex">
             {LINKS.map((l) => (
               <li key={l.id}>
-                <a href={`/#${l.id}`} onClick={jump(l.id)} className="link-line py-1">
+                <a href={sitePath(`/#${l.id}`)} onClick={jump(l.id)} className="link-line py-1">
                   {l.label}
                 </a>
               </li>
             ))}
             <li>
-              <a href={profile.cv} target="_blank" rel="noreferrer" className="link-line py-1">
+              <a
+                href={sitePath(profile.cv)}
+                target="_blank"
+                rel="noreferrer"
+                className="link-line py-1"
+              >
                 CV
               </a>
             </li>
@@ -109,7 +114,7 @@ export function Navigation() {
             <li key={l.id} className="flex items-baseline gap-4 border-b border-slate/30 py-3">
               <span className="font-mono text-xs text-lime">0{i + 1}</span>
               <a
-                href={`/#${l.id}`}
+                href={sitePath(`/#${l.id}`)}
                 onClick={jump(l.id)}
                 tabIndex={open ? 0 : -1}
                 className="font-display text-5xl font-extrabold uppercase tracking-tight"
@@ -120,7 +125,7 @@ export function Navigation() {
           ))}
         </ul>
         <a
-          href={profile.cv}
+          href={sitePath(profile.cv)}
           target="_blank"
           rel="noreferrer"
           tabIndex={open ? 0 : -1}

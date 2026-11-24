@@ -31,8 +31,8 @@ The router restoration integration uses its existing [`useElementScrollRestorati
 Start the Vite development server, then run the real-browser regression script with Python Playwright installed:
 
 ```sh
-PORTFOLIO_URL=http://127.0.0.1:5173 python tests/scroll_animations.py chrome
-PORTFOLIO_URL=http://127.0.0.1:5173 python tests/scroll_animations.py webkit
+PORTFOLIO_URL=http://127.0.0.1:5173/stefanpenchev-com python tests/scroll_animations.py chrome
+PORTFOLIO_URL=http://127.0.0.1:5173/stefanpenchev-com python tests/scroll_animations.py webkit
 ```
 
 `chrome` uses installed Google Chrome. Other Playwright engines can be selected with `chromium`, `webkit` or `firefox`, provided their browser is installed. The optional second argument selects `widths`, `lifecycle` or `fonts`; the default is `all`. Output goes to `.artifacts/scroll-fixes/`, or `PORTFOLIO_ARTIFACTS` if supplied. The tests import development module exports; no debugging hooks are shipped in the application.

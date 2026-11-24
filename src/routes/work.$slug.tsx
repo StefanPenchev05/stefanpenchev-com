@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { getProject, nextProject, projects, themes } from "@/data/projects";
 import { profile } from "@/data/profile";
+import { sitePath } from "@/lib/site";
 import { MOTION, gsap, setScene, useIsoLayoutEffect } from "@/lib/gsap";
 import { ProjectVisual } from "@/components/projects/ProjectVisual";
 import { useTransitionGo } from "@/components/layout/PageTransition";
@@ -121,14 +122,14 @@ function CaseStudy() {
   };
   const toNext = (e: React.MouseEvent) => {
     e.preventDefault();
-    go(() => navigate({ to: "/work/$slug", params: { slug: next.slug } }), next.name);
+    go(() => navigate({ to: "/work/$slug/", params: { slug: next.slug } }), next.name);
   };
 
   return (
     <main ref={root} className={`min-h-screen ${t.fg}`}>
       <section className="px-5 pb-16 pt-32 md:px-10">
         <a
-          href="/#work"
+          href={sitePath("/#work")}
           onClick={back}
           className="cs-meta link-line inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em]"
         >
@@ -275,7 +276,7 @@ function CaseStudy() {
       </section>
 
       <a
-        href={`/work/${next.slug}`}
+        href={sitePath(`/work/${next.slug}/`)}
         onClick={toNext}
         data-cursor="NEXT"
         className="cs-next group block overflow-hidden border-t border-current/20 px-5 py-24 md:px-10"

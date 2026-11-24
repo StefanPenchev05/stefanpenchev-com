@@ -1,6 +1,8 @@
 # Portfolio — Stefan Penchev
 
-Use Node.js 24 and npm with package-lock.json. Run npm run typecheck, npm run lint, npm test and npm run build.
+Use Node.js 24 and npm with package-lock.json. Run npm run typecheck, npm run lint, npm test, npm run build and npm run test:static.
+
+TanStack Start prerenders the homepage and all projects into `dist/client/`. Serve those files under `/stefanpenchev-com/`; `npm run preview` provides a static preview on port 4173. Keep the shared base path in `src/lib/site.ts`. Router destinations stay unprefixed; plain internal links and public asset URLs use `sitePath`. Preserve trailing slashes on project URLs.
 
 The active project is `~/Projects/portfolio_4`; its former Documents path is a compatibility symlink. Use the local project directory for development and standard `npm ci`. Keep source files and dependencies outside cloud-synced storage, which previously offloaded them and caused filesystem timeouts during startup.
 

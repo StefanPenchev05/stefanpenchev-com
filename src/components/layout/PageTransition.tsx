@@ -19,9 +19,13 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
 
   const go = useCallback<Go>(
     (navigate, label = "") => {
+      const scrollToDestination = () => {
+        const hash = router.state.location.hash;
+        scrollToTarget(hash ? `#${hash}` : 0, true);
+      };
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (reduced || busy.current || !panel.current) {
-        void Promise.resolve(navigate()).then(() => scrollToTarget(0, true));
+        void Promise.resolve(navigate()).then(scrollToDestination);
         return;
       }
       busy.current = true;
@@ -40,7 +44,7 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
           tl.pause();
           await navigate();
           await router.load?.();
-          scrollToTarget(0, true);
+          scrollToDestination();
           requestAnimationFrame(() => tl.resume());
         })
         .to(text.current, { yPercent: -100, opacity: 0, duration: 0.3 })

@@ -7,13 +7,14 @@
     "dev": "vite dev",
     "build": "vite build",
     "build:dev": "vite build --mode development",
-    "preview": "vite preview",
+    "preview": "node scripts/preview-static.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:static": "node --test tests/static-build.test.mjs",
     "typecheck": "tsc --noEmit",
-    "start": "node .output/server/index.mjs"
+    "start": "node scripts/preview-static.mjs"
   },
   "overrides": {
     "rolldown": "1.2.1"

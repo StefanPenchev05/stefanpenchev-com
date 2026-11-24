@@ -11,6 +11,8 @@ npm ci
 npm run dev
 ```
 
+Open `http://localhost:5173/stefanpenchev-com/`. The same base path is used in development and production.
+
 On this Mac, the active project is at `~/Projects/portfolio_4`, outside cloud-synced Documents. Both source files and `node_modules` stay local. The original `~/Documents/Projects/portfolio_4` path is a compatibility symlink to this directory.
 
 ```sh
@@ -28,10 +30,19 @@ npm run typecheck
 npm run lint
 npm test
 npm run build
-npm run start
+npm run test:static
+npm run preview
 ```
 
-`npm run build` produces `.output/`; `npm run start` runs the production Node server locally. This implementation uses server rendering and is not a static Next.js export. Hosting and publication are a separate task.
+`npm run build` uses TanStack Start to prerender the homepage and every project in `src/data/projects.ts`. The complete static site is in `dist/client/`, with a directory `index.html` for each page. `dist/server/` supports prerendering during the build and is not needed to host the exported site.
+
+`npm run preview` (also `npm start`) serves only those exported files at `http://127.0.0.1:4173/stefanpenchev-com/`, including directory indexes and real 404s. It does not render pages on demand. Use `PORT=4189 npm run preview` to select another port.
+
+The base path `/stefanpenchev-com/` and sitemap URL `https://stefanpenchev05.github.io/stefanpenchev-com/` live in `src/lib/site.ts`. Vite assets, TanStack navigation, plain links, images and the CV all use this prefix. Pass unprefixed destinations to the router; use `sitePath` for plain internal links and public files. Project URLs end in `/` to match their exported directories.
+
+`npm run test:static` checks all exported pages, internal file links, sitemap URLs and the unchanged portrait/CV. Run it after building. Hosting and publication remain a separate task; no deployment workflow is configured.
+
+With the preview server running, `python tests/static_pages.py` checks direct loads and reloads of every page, HTML content with JavaScript disabled, desktop animations, mobile navigation and downloads. It requires Python Playwright and installed Chrome. Set `PORTFOLIO_URL` if using a different preview port. The development scroll regression commands are in `docs/scroll-animation-fixes.md`.
 
 ## Content
 
