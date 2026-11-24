@@ -40,9 +40,17 @@ npm run preview
 
 The base path `/stefanpenchev-com/` and sitemap URL `https://stefanpenchev05.github.io/stefanpenchev-com/` live in `src/lib/site.ts`. Vite assets, TanStack navigation, plain links, images and the CV all use this prefix. Pass unprefixed destinations to the router; use `sitePath` for plain internal links and public files. Project URLs end in `/` to match their exported directories.
 
-`npm run test:static` checks all exported pages, internal file links, sitemap URLs and the unchanged portrait/CV. Run it after building. Hosting and publication remain a separate task; no deployment workflow is configured.
+`npm run test:static` checks all exported pages, internal file links, sitemap URLs and the unchanged portrait/CV. Run it after building.
 
 With the preview server running, `python tests/static_pages.py` checks direct loads and reloads of every page, HTML content with JavaScript disabled, desktop animations, mobile navigation and downloads. It requires Python Playwright and installed Chrome. Set `PORTFOLIO_URL` if using a different preview port. The development scroll regression commands are in `docs/scroll-animation-fixes.md`.
+
+## GitHub Pages
+
+The site is published at [stefanpenchev05.github.io/stefanpenchev-com](https://stefanpenchev05.github.io/stefanpenchev-com/).
+
+`.github/workflows/deploy-pages.yml` runs on every push to `main`. It installs the locked dependencies using the Node version in `.nvmrc`, checks types/lint/tests, builds all pages, validates the static output and deploys only `dist/client/`. Deployment runs only after the checks succeed. The generated files stay out of Git.
+
+In the repository's **Settings → Pages**, the publishing source must be **GitHub Actions**. The workflow uses GitHub's built-in token and the `github-pages` environment; no personal token or repository secret is needed. To publish again without a new commit, open **Actions → Deploy portfolio to GitHub Pages → Run workflow** and select `main`.
 
 ## Content
 
